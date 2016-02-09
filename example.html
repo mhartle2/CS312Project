@@ -30,7 +30,7 @@
       var engine = new BABYLON.Engine(canvas, true);
       // -------------------------------------------------------------
       // Here begins a function that we will 'call' just after it's built
-	  
+	   
 	  
       var createScene = function () {
          // Now create a basic Babylon Scene object
@@ -38,11 +38,20 @@
          // Change the scene background color to green.
          scene.clearColor = new BABYLON.Color3(0.5, .2, 0.6);
          // This creates and positions a free camera
-         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+         var camera = new BABYLON.ArcRotateCamera("FollowCamera", 4.712, 1, 20, new BABYLON.Vector3(0, 15, -45), scene);
+         //camera.keysUp = [];
+         //camera.keysDown = [];
+         //camera.keysLeft = [];
+         //camera.keysRight = [];
+         //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
          // This targets the camera to scene origin
-         camera.setTarget(BABYLON.Vector3.Zero());
+         //camera.setTarget(BABYLON.Vector3.Zero());
          // This attaches the camera to the canvas
-         camera.attachControl(canvas, false);
+         scene.activeCamera.attachControl(canvas);
+
+         scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+         camera.applyGravity = true;
+
          // This creates a light, aiming 0,1,0 - to the sky.
          var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
          // Dim the light a small amount
@@ -51,66 +60,175 @@
          var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
          // Move the sphere upward 1/2 its height
          sphere.position.y = 1;
+         camera.target = sphere;
+         scene.activeCamera = camera;
          // Let's try our built-in 'ground' shape. Params: name, width, depth, subdivisions, scene
-         var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+         var ground = BABYLON.Mesh.CreateGround("ground1", 15, 15, 2, scene);
+
+
+         var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
+         var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+         skyboxMaterial.backFaceCulling = false;
+         skyboxMaterial.disableLighting = true;
+         skybox.material = skyboxMaterial;
+
+         skybox.infiniteDistance = true;
+
+         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skyBox", scene);
+         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+
+         skybox.renderingGroupId = 0;
+
          // Leave this function
+		   // -z
+		   var back = false;
+		   // +z
+		   var forward = false;
+		   // -x
+		   var left = false;
+		   // +x
+		   var right = false;
+		   var forwardSpeed = 0;
+         var backSpeed = 0;
+         var rightSpeed = 0;
+         var leftSpeed = 0;
+
+         window.addEventListener("keydown", function(e) {
+            // w -z
+            if (e.keyCode == 87) {
+               back = false;
+               forward = true;
+            }              
+            // s +z
+            if (e.keyCode == 83) {
+               forward = false;
+               back = true;
+            }
+            // a -x
+            if (e.keyCode == 65) {
+               left = true;
+               right = false;
+            }
+            // d +x
+            if (e.keyCode == 68) {
+               left = false;
+               right = true;
+            }
+         });
+      window.addEventListener("keyup", function(e) {
+         // w -z
+         if (e.keyCode == 87) {
+            back = false;
+            forward = false;
+         }              
+         // s +z
+         if (e.keyCode == 83) {
+            forward = false;
+            back = false;
+         }
+         // a -x
+         if (e.keyCode == 65) {
+            left = false;
+            right = false;
+         }
+         // d +x
+         if (e.keyCode == 68) {
+            left = false;
+            right = false;
+         }
+      });
+
+      
+		scene.registerBeforeRender(function(){
 		 
-		 // -z
-		 var back = false;
-		 // +z
-		 var forward = false;
-		 // -x
-		 var left = false;
-		 // +x
-		 var right = false;
-		 
-		 scene.registerBeforeRender(function(){
-		 
-			window.addEventListener("keypress", function(e) {
-			// w -z
-				if (e.keyCode == 119) {
-					back = true;
-					forward = false;
-				}					
-			// s +z
-				if (e.keyCode == 115) {
-					forward = true;
-					back = false;
-				}
-			// a -x
-				if (e.keyCode == 97) {
-					left = true;
-					right = false;
-				}
-			// d +x
-				if (e.keyCode == 100) {
-					left = false;
-					right = true;
-				}
-			// Clear all directional movement
-				if (e.keyCode == 32) {
-					left = false;
-					right = false;
-					back = false;
-					forward = false;
-				}
-			});
+         camera.target = sphere.position;
 			
-			if (forward) {
-				sphere.position.z -= .007;
+			// MOVE FORWARD
+			if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
+            forwardSpeed += 0.02;
+            //console.log("moving foward");
+            //sphere.position.z -= .007;
+         }
+         else if (forwardSpeed > 0 && back) {
+            forwardSpeed -= 0.03;
+            //console.log("breaking");
+            //sphere.position.z += .007;
+         }
+         else if (forwardSpeed > 0 && !back) {
+           // console.log("slowing");
+            forwardSpeed -= 0.01;
+         }
+
+         // MOVE BACKWARD
+         if (back && backSpeed < 0.5 && forwardSpeed <= 0) {
+            backSpeed += 0.02;
+
+            //sphere.position.z -= .007;
+         }
+         else if (backSpeed > 0 && forward) {
+            backSpeed -= 0.03;
+            //sphere.position.z += .007;
+         }
+         else if (backSpeed > 0 && !forward) {
+            backSpeed -= 0.01;
+         }
+
+         // MOVE LEFT
+         if (left && leftSpeed < 0.5 && rightSpeed <= 0) {
+            leftSpeed += 0.02;
+            //console.log("moving foward");
+            //sphere.position.z -= .007;
+         }
+         else if (leftSpeed > 0 && right) {
+            leftSpeed -= 0.03;
+            //console.log("breaking");
+            //sphere.position.z += .007;
+         }
+         else if (leftSpeed > 0 && !right) {
+            // console.log("slowing");
+            leftSpeed -= 0.01;
+         }
+
+         // MOVE RIGHT
+         if (right && rightSpeed < 0.5 && leftSpeed <= 0) {
+            rightSpeed += 0.02;
+            //console.log("moving foward");
+            //sphere.position.z -= .007;
+         }
+         else if (rightSpeed > 0 && left) {
+            rightSpeed -= 0.03;
+            //console.log("breaking");
+            //sphere.position.z += .007;
+         }
+         else if (rightSpeed > 0 && !left) {
+            // console.log("slowing");
+            rightSpeed -= 0.01;
+         }
+
+
+
+         //if (forward)
+           // console.log("moving foward");
+			if (right || rightSpeed > 0) {
+				sphere.position.x += rightSpeed;
+            //console.log();
 			}
-			if (back) {
-				sphere.position.z += .007;
+			if (left || leftSpeed > 0) {
+				sphere.position.x -= leftSpeed;
 			}
-			if (right) {
-				sphere.position.x += .007;
-			}
-			if (left) {
-				sphere.position.x -= .007;
-			}
-		 });
-         return scene;
-      }; // End of createScene function
+         if (forward || forwardSpeed > 0){
+            sphere.position.z += forwardSpeed;
+            //console.log(forwardSpeed);
+         }
+         if (back || backSpeed > 0) {
+            sphere.position.z -= backSpeed;
+            //console.log(backSpeed)
+         }
+		})
+      return scene;
+   }; // End of createScene function
 	  
 	  
       // -------------------------------------------------------------
