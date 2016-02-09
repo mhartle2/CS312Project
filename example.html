@@ -57,14 +57,28 @@
          // Dim the light a small amount
          light.intensity = 1;
          // Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
+         
+
+         //CHANGING
+
          var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
          // Move the sphere upward 1/2 its height
          sphere.position.y = 1;
+
+
+
+
+
          camera.target = sphere;
          scene.activeCamera = camera;
          // Let's try our built-in 'ground' shape. Params: name, width, depth, subdivisions, scene
          var ground = BABYLON.Mesh.CreateGround("ground1", 15, 15, 2, scene);
 
+         var materialSphere5 = new BABYLON.StandardMaterial("texture5", scene);
+         materialSphere5.diffuseTexture = new BABYLON.Texture("textures/amiga.jpg", scene);
+         materialSphere5.diffuseTexture.hasAlpha = true;
+
+         sphere.material = materialSphere5;
 
          var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
          var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
@@ -213,23 +227,25 @@
            // console.log("moving foward");
 			if (right || rightSpeed > 0) {
 				sphere.position.x += rightSpeed;
-            //console.log();
+            sphere.rotation.z -= rightSpeed;
 			}
 			if (left || leftSpeed > 0) {
 				sphere.position.x -= leftSpeed;
+            sphere.rotation.z += leftSpeed;
 			}
          if (forward || forwardSpeed > 0){
             sphere.position.z += forwardSpeed;
-            //console.log(forwardSpeed);
+            sphere.rotation.x += forwardSpeed;
          }
          if (back || backSpeed > 0) {
             sphere.position.z -= backSpeed;
-            //console.log(backSpeed)
+            sphere.rotation.x -= backSpeed;
          }
 		})
       return scene;
    }; // End of createScene function
-	  
+	
+
 	  
       // -------------------------------------------------------------
       // Now, call the createScene function that you just finished creating
