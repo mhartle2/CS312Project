@@ -72,8 +72,23 @@
          camera.target = sphere;
          scene.activeCamera = camera;
          // Let's try our built-in 'ground' shape. Params: name, width, depth, subdivisions, scene
-         var ground = BABYLON.Mesh.CreateGround("ground1", 15, 15, 2, scene);
-
+         var ground = new BABYLON.Mesh.CreateGround("ground", 7, 15, 2, scene);
+		 var ground1 = new BABYLON.Mesh.CreateGround("ground1", 7, 15, 2, scene);
+		 var ground2 = new BABYLON.Mesh.CreateGround("ground2", 7, 15, 2, scene);
+		 var ground3 = new BABYLON.Mesh.CreateGround("ground3", 7, 15, 2, scene);
+		 
+		 ground1.rotation.x -= 30 * Math.PI / 180;
+		 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
+		 ground1.position.y = 7.5 * Math.sin(30 * Math.PI / 180);
+		 
+		 ground2.position.y = ground1.position.y * 2;
+		 ground2.position.z = ground1.position.z * 2;
+		 
+		 ground3.rotation.y = Math.PI / 2;
+		 ground3.position.y = ground2.position.y;
+		 ground3.position.z = ground2.position.z + 4;
+		 ground3.position.x = 11;
+		 
          var materialSphere5 = new BABYLON.StandardMaterial("texture5", scene);
          materialSphere5.diffuseTexture = new BABYLON.Texture("textures/amiga.jpg", scene);
          materialSphere5.diffuseTexture.hasAlpha = true;
