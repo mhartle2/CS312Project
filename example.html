@@ -66,7 +66,7 @@
                 var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
                 // Move the sphere upward 1/2 its height
                 sphere.position.y = 15.01;
-				sphere.position.z = -15;
+//				sphere.position.z = -15;
 
 
 
@@ -157,7 +157,8 @@
                     }
                 });
 
-				var collisionGround = false;
+				var collisionGround;
+				var collisionLowGround = false;
                 scene.registerBeforeRender(function () {
 
                     camera.target = sphere.position;
@@ -216,47 +217,78 @@
                         rightSpeed -= 0.01;
                     }
 
+					collisionGround = isTouchingGround(groundArray, sphere);
+					if (collisionGround.length < 1) {
+						collisionGround = false;
+					}
+					
+					
 					var gravityA = .1;
 					var gravityV = .1;
+					gravityV += gravityA;
 					
-					// If colliding, apply gravity
-					if (!(collisionGround = isTouchingGround(groundArray, sphere))) {
-						//console.log ("keep going");
-						gravityV += gravityA;
+					// If not colliding, apply gravity
+					if (!collisionGround) {
 						sphere.position.y -= gravityV;
 					
-					// If not, don't
+					// If so, apply slope gravity
 					} else {
+						collisionLowGround = collisionGround[0];
+						if (collisionGround.length > 1) {
+							if ((collisionGround[0].position.y < collisionGround[1].position.y) && !gravityV) {
+									collisionLowGround = collisionGround[0];
+							} else {
+								collisionLowGround = collisionGround[1];
+							}
+						}
+						sphere.position.y -= gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.sin (-collisionLowGround.rotation.z)
+						                   + gravityV * Math.sin(collisionLowGround.rotation.x) * Math.sin(collisionLowGround.rotation.x);
+						sphere.position.x += gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.cos(-collisionLowGround.rotation.z);
+						sphere.position.z += gravityV * Math.sin(collisionLowGround.rotation.x) * Math.cos(collisionLowGround.rotation.x);
+						
+						if ((collisionLowGround.rotation.z + collisionLowGround.rotation.x) == 0) {
+							console.log( "this" + collisionLowGround.position.y)
+							sphere.position.y = collisionLowGround.position.y + 1;
+						}
 						gravityV = 0;
+						
 					}
-
+					
+					
+					
+					var collisionHighGround = false;
+					
+					if (collisionGround.length > 1) {
+						collisionHighGround = (collisionGround[0].position.y > collisionGround[1].position.y) ? collisionGround[0] : collisionGround[1];
+						console.log(collisionHighGround.position.y + " : " + 
+						            collisionGround[0].position.y + " : " + collisionGround[1].position.y);
+					} else if (collisionGround.length = 1) {
+						collisionHighGround = collisionGround[0];
+					}
+					
                     //if (forward)
-                    // console.log("moving foward");
                     if (right || rightSpeed > 0) {
-						if (collisionGround) {
-							console.log(rightSpeed * Math.sin(collisionGround.rotation.z));
-							sphere.position.y += rightSpeed * Math.sin(collisionGround.rotation.z);
-							sphere.position.x += rightSpeed * Math.cos(collisionGround.rotation.z);
+						if (collisionHighGround) {
+							sphere.position.y += rightSpeed * Math.sin(collisionHighGround.rotation.z);
+							sphere.position.x += rightSpeed * Math.cos(collisionHighGround.rotation.z);
 						} else {
 							sphere.position.x += rightSpeed;
 						}
                         sphere.rotation.z -= rightSpeed;
                     }
                     if (left || leftSpeed > 0) {
-						if (collisionGround) {
-							console.log(leftSpeed * Math.sin(collisionGround.rotation.z));
-							sphere.position.y -= leftSpeed * Math.sin(collisionGround.rotation.z);
-							sphere.position.x -= leftSpeed * Math.cos(collisionGround.rotation.z);
+						if (collisionHighGround) {
+							sphere.position.y -= leftSpeed * Math.sin(collisionHighGround.rotation.z);
+							sphere.position.x -= leftSpeed * Math.cos(collisionHighGround.rotation.z);
 						} else {
 							sphere.position.x -= leftSpeed;
 						}
                         sphere.rotation.z += leftSpeed;
                     }
                     if (forward || forwardSpeed > 0) {
-						if (collisionGround) {
-							console.log(forwardSpeed * Math.sin(collisionGround.rotation.x));
-							sphere.position.y += forwardSpeed * Math.sin(-collisionGround.rotation.x);
-							sphere.position.z += forwardSpeed * Math.cos(-collisionGround.rotation.x);
+						if (collisionHighGround) {
+							sphere.position.y += forwardSpeed * Math.sin(-collisionHighGround.rotation.x);
+							sphere.position.z += forwardSpeed * Math.cos(-collisionHighGround.rotation.x);
 						} else {
 							sphere.position.z += forwardSpeed;
 						}
@@ -264,15 +296,15 @@
                         
                     }
                     if (back || backSpeed > 0) {
-						if (collisionGround) {
-							console.log(backSpeed * Math.sin(collisionGround.rotation.x));
-							sphere.position.y += backSpeed * Math.sin(collisionGround.rotation.x);
-							sphere.position.z -= backSpeed * Math.cos(collisionGround.rotation.x);
+						if (collisionHighGround) {
+							sphere.position.y += backSpeed * Math.sin(collisionHighGround.rotation.x);
+							sphere.position.z -= backSpeed * Math.cos(collisionHighGround.rotation.x);
 						} else {
 							sphere.position.z -= backSpeed;
 						}
                         sphere.rotation.x -= backSpeed;
                     }
+					
 					
 					
 				})
@@ -281,11 +313,13 @@
 
             // Function that checks if ball has collided with the ground
             var isTouchingGround = function (groundArray, sphere) {
-				var flag = false;
+				var flag = new Array();
+				var count = 0;
 				for (var i = 0; i < groundArray.length; i++) {
 					if (sphere.intersectsMesh(groundArray[i], true)) {
-						//console.log("intersecting " + i);
-						flag = groundArray[i];
+						console.log("intersecting " + i);
+						flag[count++] = groundArray[i];
+						
 					}
 				}
 				return flag;
@@ -339,9 +373,9 @@
                 ground5.position.y = 7.5 + 7.5 * Math.sin(45 * Math.PI / 180);
 				groundArray[5] = ground5;
 				
-				ground6.rotation.z = -45 * Math.PI / 180;
-				ground6.position.x = -3.5 - 7.5 * Math.cos(45 * Math.PI / 180);
-                ground6.position.y = 7.5 * Math.sin(45 * Math.PI / 180);
+				ground6.rotation.z = -15 * Math.PI / 180;
+				ground6.position.x = -3.5 - 7.5 * Math.cos(15 * Math.PI / 180);
+                ground6.position.y = 7.5 * Math.sin(15 * Math.PI / 180);
 				groundArray[6] = ground6;
 
                 return groundArray;
