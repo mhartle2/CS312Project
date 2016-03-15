@@ -324,7 +324,9 @@
 			var checkFinished = function(sphere, goal, engine) {
 				if (sphere.intersectsMesh(goal, false)) {
 					engine.stopRenderLoop();
-					window.location.href = "blarg.html";
+					window.setTimeout(function() {
+						window.location.href = "blarg.html";
+					}, 350);
 				}
 			}
 			
