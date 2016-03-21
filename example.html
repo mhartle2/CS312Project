@@ -234,8 +234,8 @@
 				}
 				
 				
-				var gravityA = .07;
-				var gravityV = .07;
+				var gravityA = .2;
+				var gravityV = .2;
 				gravityV += gravityA;
 				
 				// If not colliding, apply gravity
@@ -348,28 +348,34 @@
             var createGround = function (scene) {
                 var groundArray = new Array();
                 var ground = new BABYLON.Mesh.CreateGround("ground", 7, 15, 2, scene);
-				var groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-				
-				ground.material = groundMaterial;
+				var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
+				var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
+
+				groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
+				groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+				ground.material = groundMaterialGreen;
 				ground.material.backFaceCulling = false;
                 groundArray[0] = ground;
 
                 var ground1 = new BABYLON.Mesh.CreateGround("ground1", 7, 15, 2, scene);
-				ground1.material = groundMaterial;
+				ground1.material = groundMaterialBlue;
                 var ground2 = new BABYLON.Mesh.CreateGround("ground2", 7, 15, 2, scene);
-				ground2.material = groundMaterial;
+				ground2.material = groundMaterialGreen;
                 var ground3 = new BABYLON.Mesh.CreateGround("ground3", 7, 15, 2, scene);
-				ground3.material = groundMaterial;
+				ground3.material = groundMaterialBlue;
 				var ground4 = new BABYLON.Mesh.CreateGround("ground4", 7, 15, 2, scene);
-				ground4.material = groundMaterial;
+				ground4.material = groundMaterialBlue;
 				var ground5 = new BABYLON.Mesh.CreateGround("ground5", 15, 7, 2, scene);
-				ground5.material = groundMaterial;
+				ground5.material = groundMaterialGreen;
 				var ground6 = new BABYLON.Mesh.CreateGround("ground6", 15, 7, 2, scene);
-				ground6.material = groundMaterial;
+				ground6.material = groundMaterialBlue;
 				var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
-				ground7.material = groundMaterial;
+				ground7.material = groundMaterialBlue; 
 				var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
-				ground8.material = groundMaterial;
+				ground8.material = groundMaterialGreen;
+				var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
+				ground9.material = groundMaterialGreen;
 				
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -412,6 +418,12 @@
 				ground8.position.x = -26.35 * Math.cos(15 * Math.PI / 180);
 				groundArray[8] = ground8;
 				
+				ground9.rotation.x -= 30 * Math.PI / 180;
+				ground9.position.x = 16;
+                ground9.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
+                ground9.position.y = 7.5 * Math.sin(30 * Math.PI / 180);
+				groundArray[9] = ground9;
+
                 return groundArray;
             }
 
