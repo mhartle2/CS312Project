@@ -368,6 +368,8 @@
 				ground6.material = groundMaterial;
 				var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
 				ground7.material = groundMaterial;
+				var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
+				ground8.material = groundMaterial;
 				
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -405,6 +407,10 @@
 				ground7.position.x = 26 + 15 * Math.cos(20 * Math.PI / 180);
 				groundArray[7] = ground7;
 				
+				ground8.position.y = ground6.position.y * 2;
+				ground8.position.z = ground6.position.z * 2;
+				ground8.position.x = -26.35 * Math.cos(15 * Math.PI / 180);
+				groundArray[8] = ground8;
 				
                 return groundArray;
             }
