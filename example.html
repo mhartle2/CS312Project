@@ -75,13 +75,17 @@
 			goal.position.x = 26 + 15 * Math.cos(15 * Math.PI / 180);
 			goal.position.y = 1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
 			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);
-			goal.computeWorldMatrix(true);
 			
+			goal.computeWorldMatrix(true);
+			goal.position.y += 10;
 			//CHANGING
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
 			sphere.position.y = 1;
 			sphere.position.z = 5;
+sphere.position.y = goal.position.y -7;
+sphere.position.z = goal.position.z;
+sphere.position.x = goal.position.x;
 			sphere.visibility = true;
 			sphere.computeWorldMatrix(true);
 
@@ -360,7 +364,7 @@
                 var ground = new BABYLON.Mesh.CreateGround("ground", 7, 15, 2, scene);
 				var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
 				var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
-
+				groundMaterialBlue.backFaceCulling = false;
 				groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
 				groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
@@ -386,6 +390,20 @@
 				ground8.material = groundMaterialGreen;
 				var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
 				ground9.material = groundMaterialGreen;
+				var ground10 = new BABYLON.Mesh.CreateGround("ground10", 10, 7, 2, scene);
+				ground10.material = groundMaterialGreen;
+				var ground11 = new BABYLON.Mesh.CreateGround("ground11", 10, 7, 2, scene);
+				ground11.material = groundMaterialBlue;
+				var ground12 = new BABYLON.Mesh.CreateGround("ground12", 10, 7, 2, scene);
+				ground12.material = groundMaterialGreen;
+				var ground13 = new BABYLON.Mesh.CreateGround("ground13", 10, 7, 2, scene);
+				ground13.material = groundMaterialBlue;
+				var ground14 = new BABYLON.Mesh.CreateGround("ground14", 7, 100, 2, scene);
+				ground14.material = groundMaterialGreen;
+				var ground15 = new BABYLON.Mesh.CreateGround("ground15", 15, 7, 2, scene);
+				ground15.material = groundMaterialBlue;
+				
+				
 				
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -433,8 +451,38 @@
                 ground9.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
                 ground9.position.y = 7.5 * Math.sin(30 * Math.PI / 180);
 				groundArray[9] = ground9;
-
-                return groundArray;
+				
+				ground10.rotation.x = -15 * Math.PI / 180;
+				ground10.position.x = ground7.position.x + 11;
+				ground10.position.y = ground7.position.y + 3.5 * Math.sin(15 * Math.PI / 180);
+				ground10.position.z = ground7.position.z + 3.5 + 3.5 * Math.cos(15 * Math.PI / 180);
+                groundArray[10] = ground10;
+				
+				ground11.rotation = ground10.rotation;
+				ground11.position.x = ground10.position.x + 9;
+				ground11.position.y = ground10.position.y + 7 * Math.sin(15 * Math.PI / 180);
+				ground11.position.z = ground10.position.z + 7 * Math.cos(15 * Math.PI / 180);
+				groundArray[11] = ground11;
+				
+				ground12.rotation = ground11.rotation;
+				ground12.position.x = ground11.position.x + 9;
+				ground12.position.y = ground11.position.y + 7 * Math.sin(15 * Math.PI / 180);
+				ground12.position.z = ground11.position.z + 7 * Math.cos(15 * Math.PI / 180);
+				groundArray[12] = ground12;
+				
+				ground13.rotation = ground12.rotation;
+				ground13.position.x = ground12.position.x + 9;
+				ground13.position.y = ground12.position.y + 7 * Math.sin(15 * Math.PI / 180);
+				ground13.position.z = ground12.position.z + 7 * Math.cos(15 * Math.PI / 180);
+				groundArray[13] = ground13;
+				
+				ground14.rotation.x = -30 * Math.PI / 180;
+				ground14.position.x = ground13.position.x + 6;
+				ground14.position.y = ground13.position.y + 7 * Math.sin(15 * Math.PI / 180);
+				ground14.position.z = ground13.position.z + 7 * Math.cos(15 * Math.PI / 180);
+				groundArray[14] = ground14;
+				
+				return groundArray;
             }
 
             // -------------------------------------------------------------
