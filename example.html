@@ -23,13 +23,26 @@
     </head>
     <body>
 
+    <!-- Need to change to % based instead of actual px. -->
     <div style="position: absolute;">
     	<IMG STYLE="position:absolute; TOP:3px; LEFT:3px; WIDTH:65px; HEIGHT:55px;" SRC="Lives.png">
     </div>
 
-    <div style="position: absolute;">
-    	<IMG style="position:absolute; width:34px;height:24px; left:60px; Top: 13px;" src="Life.jpg" >
+    <div style="position: absolute; LEFT: 3%; TOP: 2%;">
+    	<IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesOne" >
     </div>
+
+    <div style="position: absolute; LEFT: 5%; TOP: 2%;">
+        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesTwo" >
+    </div>
+
+        <div style="position: absolute; LEFT: 7%; TOP: 2%;">
+        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesThree" >
+    </div>
+
+
+
+    <div id="timer" style="position:absolute; color:white; TOP: 3%; LEFT: 95%;" font size="30"></div>
 
 
         <canvas id="renderCanvas"></canvas>
@@ -41,6 +54,20 @@
         // -------------------------------------------------------------
         // Here begins a function that we will 'call' just after it's built
 
+        var lifeCount;
+        var dead;
+        var gameOver;
+
+
+        function initialize()
+        {
+            lifeCount = 3;
+            dead = false;
+            gameOver = false;
+            countdown( "timer", 1, 5 );
+        }
+
+        initialize();
 
         var createScene = function () {
         // Now create a basic Babylon Scene object
@@ -74,13 +101,12 @@
 			goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
 			goal.position.x = 26 + 15 * Math.cos(15 * Math.PI / 180);
 			goal.position.y = 1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
-			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);
-			
+			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);			
 			goal.computeWorldMatrix(true);
 			goal.position.y += 10;
-			//CHANGING
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+            sphere.position.x = 0
 			sphere.position.y = 1;
 			sphere.position.z = 5;
 sphere.position.y = goal.position.y -7;
@@ -132,29 +158,36 @@ sphere.position.x = goal.position.x;
 
 			window.addEventListener("keydown", function (e) {
 				// w -z
-				if (e.keyCode == 87) {
-					back = false;
-					forward = true;
-				}
-				// s +z
-				if (e.keyCode == 83) {
-					forward = false;
-					back = true;
-				}
-				// a -x
-				if (e.keyCode == 65) {
-					left = true;
-					right = false;
-				}
-				// d +x
-				if (e.keyCode == 68) {
-					left = false;
-					right = true;
-				}
+
+                if (gameOver == false)
+                {
+				    if (e.keyCode == 87) {
+				    	back = false;
+    					forward = true;
+    				}
+    				// s +z
+    				if (e.keyCode == 83) {
+    					forward = false;
+    					back = true;
+    				}
+    				// a -x
+    				if (e.keyCode == 65) {
+    					left = true;
+    					right = false;
+    				}
+    				// d +x
+    				if (e.keyCode == 68) {
+    					left = false;
+    					right = true;
+    				}
+                }
 			});
 			window.addEventListener("keyup", function (e) {
 				// w -z
-				if (e.keyCode == 87) {
+				
+
+            
+                if (e.keyCode == 87) {
 					back = false;
 					forward = false;
 				}
@@ -179,6 +212,7 @@ sphere.position.x = goal.position.x;
 					sphere.position.x = 0;
 					sphere.position.z = 0;
 				}
+             
 			});
 
 			var collisionGround;
@@ -280,6 +314,20 @@ sphere.position.x = goal.position.x;
 				}
 				
 				
+
+                //Death
+                if (sphere.position.y <= -50)
+                {
+                    dead = true;
+                    death();
+                    
+                    //Add game reset
+                    sphere.position.x = 0;
+                    sphere.position.y = 1;
+                    sphere.position.z = 5;
+                }
+
+
 				
 				var collisionHighGround = false;
 				
@@ -496,7 +544,72 @@ sphere.position.x = goal.position.x;
             window.addEventListener("resize", function () {
                 engine.resize();
             });
+
+
+function countdown( elementName, minutes, seconds )
+{
+    var element, endTime, hours, mins, msLeft, time;
+
+    function twoDigits( n )
+    {
+        return (n <= 9 ? "0" + n : n);
+    }
+
+    function updateTimer()
+    {
+        msLeft = endTime - (+new Date);
+        if ( msLeft < 1000 ) {
+            element.innerHTML = "countdown's over!";
+        } else {
+            time = new Date( msLeft );
+            hours = time.getUTCHours();
+            mins = time.getUTCMinutes();
+            element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+            setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+        }
+    }
+
+    element = document.getElementById( elementName );
+    endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+    updateTimer();
+}
+
+
+
+
+
+function death()
+{
+    console.log(lifeCount);
+    lifeCount--;
+
+    if (lifeCount == 2 && dead == true)
+    {
+        var lifeImage = document.getElementById('livesThree');
+        lifeImage.parentNode.removeChild(lifeImage);   
+        dead = false; 
+    }
+
+    else if (lifeCount == 1 && dead == true)
+    {
+        var lifeImage = document.getElementById('livesTwo');
+        lifeImage.parentNode.removeChild(lifeImage);    
+        dead = false;
+    }
+
+    else if (lifeCount == 0 && dead == true)
+    {
+        var lifeImage = document.getElementById('livesOne');
+        lifeImage.parentNode.removeChild(lifeImage);    
+        gameOver = true;
+    }
+
+}
+
+
         </script>
+
+
 
 
 
