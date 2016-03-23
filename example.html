@@ -56,12 +56,15 @@
 
         var lifeCount;
         var dead;
+        var gameOver;
 
 
         function initialize()
         {
             lifeCount = 3;
-            var dead = false;
+            dead = false;
+            gameOver = false;
+            countdown( "timer", 1, 5 );
         }
 
         initialize();
@@ -100,13 +103,7 @@
 			goal.position.y = 1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
 			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);
 			goal.computeWorldMatrix(true);
-			
-
-            //Time
-
-
-
-
+		
 			//CHANGING
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
@@ -159,29 +156,36 @@
 
 			window.addEventListener("keydown", function (e) {
 				// w -z
-				if (e.keyCode == 87) {
-					back = false;
-					forward = true;
-				}
-				// s +z
-				if (e.keyCode == 83) {
-					forward = false;
-					back = true;
-				}
-				// a -x
-				if (e.keyCode == 65) {
-					left = true;
-					right = false;
-				}
-				// d +x
-				if (e.keyCode == 68) {
-					left = false;
-					right = true;
-				}
+
+                if (gameOver == false)
+                {
+				    if (e.keyCode == 87) {
+				    	back = false;
+    					forward = true;
+    				}
+    				// s +z
+    				if (e.keyCode == 83) {
+    					forward = false;
+    					back = true;
+    				}
+    				// a -x
+    				if (e.keyCode == 65) {
+    					left = true;
+    					right = false;
+    				}
+    				// d +x
+    				if (e.keyCode == 68) {
+    					left = false;
+    					right = true;
+    				}
+                }
 			});
 			window.addEventListener("keyup", function (e) {
 				// w -z
-				if (e.keyCode == 87) {
+				
+
+            
+                if (e.keyCode == 87) {
 					back = false;
 					forward = false;
 				}
@@ -206,6 +210,7 @@
 					sphere.position.x = 0;
 					sphere.position.z = 0;
 				}
+             
 			});
 
 			var collisionGround;
@@ -314,7 +319,6 @@
                     dead = true;
                     death();
                     
-
                     //Add game reset
                     sphere.position.x = 0;
                     sphere.position.y = 1;
@@ -524,7 +528,7 @@ function countdown( elementName, minutes, seconds )
     updateTimer();
 }
 
-countdown( "timer", 1, 5 );
+
 
 
 
@@ -551,12 +555,11 @@ function death()
     {
         var lifeImage = document.getElementById('livesOne');
         lifeImage.parentNode.removeChild(lifeImage);    
+        gameOver = true;
     }
 
 }
 
-//death();
-//death();
 
         </script>
 
