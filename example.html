@@ -55,10 +55,13 @@
         // Here begins a function that we will 'call' just after it's built
 
         var lifeCount;
+        var dead;
+
 
         function initialize()
         {
             lifeCount = 3;
+            var dead = false;
         }
 
         initialize();
@@ -107,6 +110,7 @@
 			//CHANGING
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+            sphere.position.x = 0
 			sphere.position.y = 1;
 			sphere.position.z = 5;
 			sphere.visibility = true;
@@ -303,6 +307,21 @@
 				}
 				
 				
+
+                //Death
+                if (sphere.position.y <= -50)
+                {
+                    dead = true;
+                    death();
+                    
+
+                    //Add game reset
+                    sphere.position.x = 0;
+                    sphere.position.y = 1;
+                    sphere.position.z = 5;
+                }
+
+
 				
 				var collisionHighGround = false;
 				
@@ -514,27 +533,30 @@ function death()
     console.log(lifeCount);
     lifeCount--;
 
-    if (lifeCount == 2)
+    if (lifeCount == 2 && dead == true)
     {
-        var image_x = document.getElementById('livesThree');
-        image_x.parentNode.removeChild(image_x);    
+        var lifeImage = document.getElementById('livesThree');
+        lifeImage.parentNode.removeChild(lifeImage);   
+        dead = false; 
     }
 
-    else if (lifeCount == 1)
+    else if (lifeCount == 1 && dead == true)
     {
-        var image_x = document.getElementById('livesTwo');
-        image_x.parentNode.removeChild(image_x);    
+        var lifeImage = document.getElementById('livesTwo');
+        lifeImage.parentNode.removeChild(lifeImage);    
+        dead = false;
     }
 
-    else if (lifeCount == 0)
+    else if (lifeCount == 0 && dead == true)
     {
-        var image_x = document.getElementById('livesOne');
-        image_x.parentNode.removeChild(image_x);    
+        var lifeImage = document.getElementById('livesOne');
+        lifeImage.parentNode.removeChild(lifeImage);    
     }
 
 }
 
-death();
+//death();
+//death();
 
         </script>
 
