@@ -23,13 +23,26 @@
     </head>
     <body>
 
+    <!-- Need to change to % based instead of actual px. -->
     <div style="position: absolute;">
     	<IMG STYLE="position:absolute; TOP:3px; LEFT:3px; WIDTH:65px; HEIGHT:55px;" SRC="Lives.png">
     </div>
 
-    <div style="position: absolute;">
-    	<IMG style="position:absolute; width:34px;height:24px; left:60px; Top: 13px;" src="Life.jpg" >
+    <div style="position: absolute; LEFT: 3%; TOP: 2%;">
+    	<IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesOne" >
     </div>
+
+    <div style="position: absolute; LEFT: 5%; TOP: 2%;">
+        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesTwo" >
+    </div>
+
+        <div style="position: absolute; LEFT: 7%; TOP: 2%;">
+        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesThree" >
+    </div>
+
+
+
+    <div id="timer" style="position:absolute; color:white; TOP: 3%; LEFT: 95%;" font size="30"></div>
 
 
         <canvas id="renderCanvas"></canvas>
@@ -41,6 +54,14 @@
         // -------------------------------------------------------------
         // Here begins a function that we will 'call' just after it's built
 
+        var lifeCount;
+
+        function initialize()
+        {
+            lifeCount = 3;
+        }
+
+        initialize();
 
         var createScene = function () {
         // Now create a basic Babylon Scene object
@@ -77,6 +98,12 @@
 			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);
 			goal.computeWorldMatrix(true);
 			
+
+            //Time
+
+
+
+
 			//CHANGING
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
@@ -448,7 +475,70 @@
             window.addEventListener("resize", function () {
                 engine.resize();
             });
+
+
+function countdown( elementName, minutes, seconds )
+{
+    var element, endTime, hours, mins, msLeft, time;
+
+    function twoDigits( n )
+    {
+        return (n <= 9 ? "0" + n : n);
+    }
+
+    function updateTimer()
+    {
+        msLeft = endTime - (+new Date);
+        if ( msLeft < 1000 ) {
+            element.innerHTML = "countdown's over!";
+        } else {
+            time = new Date( msLeft );
+            hours = time.getUTCHours();
+            mins = time.getUTCMinutes();
+            element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+            setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+        }
+    }
+
+    element = document.getElementById( elementName );
+    endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+    updateTimer();
+}
+
+countdown( "timer", 1, 5 );
+
+
+
+function death()
+{
+    console.log(lifeCount);
+    lifeCount--;
+
+    if (lifeCount == 2)
+    {
+        var image_x = document.getElementById('livesOne');
+        image_x.parentNode.removeChild(image_x);    
+    }
+
+    else if (lifeCount == 1)
+    {
+        var image_x = document.getElementById('livesTwo');
+        image_x.parentNode.removeChild(image_x);    
+    }
+
+    else if (lifeCount == 0)
+    {
+        var image_x = document.getElementById('livesThree');
+        image_x.parentNode.removeChild(image_x);    
+    }
+
+}
+
+//death();
+
         </script>
+
+
 
 
 
