@@ -259,12 +259,13 @@
                         right = true;
                     }
                     if (e.keyCode == 32 && collisionGround) {
-                    jumping = true;
-                    console.log("jumping");
-                    for (var i = 0; i < 10000; i++) {
-                        sphere.position.y += .001;
+                        jumping = true;
+                        console.log("jumping");
+                        for (var i = 0; i < 10000; i++) {
+                        
+                            sphere.position.y += .001;
+                        }
                     }
-                }
                 }
             });
             window.addEventListener("keyup", function (e) {
@@ -486,6 +487,7 @@
                     sphere.rotation.x -= backSpeed;
                 }
                 
+
                 getObject1(sphere, object1);
                 getObject2(sphere, object2);
                 checkFinished(sphere, goal, outputplane);
@@ -494,9 +496,7 @@
             }; // End of createScene function
 
             var checkFinished = function(sphere, goal, outputplane) {
-                
- 
- 
+              
                 if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool) {
                     goal.dispose();
                 }
@@ -602,8 +602,10 @@
                 ground15.material = grass;
                 ground16 = new BABYLON.Mesh.CreateGround("ground16", 7, 7, 2, scene);
                 ground16.material = grass;
-                ground17 = new BABYLON.Mesh.CreateGround("ground16", 15, 7, 2, scene);
+                var ground17 = new BABYLON.Mesh.CreateGround("ground17", 15, 7, 2, scene);
                 ground17.material = grass;
+                var ground18 = new BABYLON.Mesh.CreateGround("ground18", 25, 7, 2, scene);
+                ground18.material = grass;
 
                 
                 ground1.rotation.x -= 30 * Math.PI / 180;
@@ -695,6 +697,12 @@
                 ground17.position.z = ground8.position.z - 3;
                 ground17.rotation.y = 45 * Math.PI / 180;
                 groundArray[17] = ground17;
+
+                ground18.position.x = ground17.position.x + 23;
+                ground18.position.y = ground17.position.y + 10;
+                ground18.position.z = ground17.position.z;
+                ground18.rotation.z = 40 * Math.PI / 180;
+                groundArray[18] = ground18;
 
                 return groundArray;
             }
