@@ -19,7 +19,8 @@
 
         h1
         {
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+            
+            text-shadow: 0px 2px 3px #666;
         }
    
         </style>
@@ -253,8 +254,8 @@
                     if (e.keyCode == 32 && collisionGround) {
                     jumping = true;
                     console.log("jumping");
-                    for (var i = 0; i < 1000; i++) {
-                        sphere.position.y += .01;
+                    for (var i = 0; i < 10000; i++) {
+                        sphere.position.y += .001;
                     }
                 }
                 }
@@ -520,17 +521,24 @@
             var createGround = function (scene) {
                 var groundArray = new Array();
                 var ground = new BABYLON.Mesh.CreateGround("ground", 7, 15, 2, scene);
-                var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
-                var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
+         //       var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
+         //       var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
 
 
                 var groundPurpleLava = new BABYLON.StandardMaterial("purpleLava", scene);
                 groundPurpleLava.diffuseTexture = new BABYLON.Texture("pathOne.jpg", scene);
 
-                groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
-                groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                var water = new BABYLON.StandardMaterial("water", scene);
+                water.diffuseTexture = new BABYLON.Texture("waterTwo.jpg", scene);
 
-                ground.material = groundPurpleLava;;
+                var grass = new BABYLON.StandardMaterial("grass", scene);
+                grass.diffuseTexture = new BABYLON.Texture("grassFour.jpg", scene);
+
+
+            //    groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
+            //    groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+                ground.material = grass;
                 ground.material.backFaceCulling = false;
                 groundArray[0] = ground;
 
@@ -564,7 +572,7 @@
                 var ground13 = new BABYLON.Mesh.CreateGround("ground13", 10, 7, 2, scene);
                 ground13.material = groundPurpleLava;
                 var ground14 = new BABYLON.Mesh.CreateGround("ground14", 7, 100, 2, scene);
-                ground14.material = groundPurpleLava;
+                ground14.material = water;
                 var ground15 = new BABYLON.Mesh.CreateGround("ground15", 15, 7, 2, scene);
                 ground15.material = groundPurpleLava;
                 
@@ -761,6 +769,32 @@ function endGame()
     });
 
 }
+
+
+
+    var createTorch = function (name, x, y, z, scene, shadowGenerator, brickMaterial, woodMaterial, grassMaterial) {
+        //createBrickBlock
+        var brickblock = BABYLON.Mesh.CreateBox(name + "brickblock", 1, scene);
+        brickblock.position = new BABYLON.Vector3(x, y, z);
+        brickblock.material = brickMaterial;
+
+        //createWood
+        var torchwood = BABYLON.Mesh.CreateCylinder(name + "torchwood", 2, 0.25, 0.1, 12, 1, scene);
+        torchwood.position = new BABYLON.Vector3(x, y + 1, z);
+        torchwood.material = woodMaterial;
+
+        //leafs
+        var leafs2 = BABYLON.Mesh.CreateSphere(name + "leafs2", 10, 1.2, scene);
+        leafs2.position = new BABYLON.Vector3(x, y + 2, z);
+        leafs2.material = grassMaterial;
+
+        shadowGenerator.getShadowMap().renderList.push(torchwood);
+        shadowGenerator.getShadowMap().renderList.push(leafs2);
+        shadowGenerator.getShadowMap().renderList.push(brickblock);
+    }
+
+
+
 
 
         </script>
