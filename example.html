@@ -77,6 +77,8 @@
 
         var numBoxesLeft;
 
+        var jumping;
+
 
         function initialize()
         {
@@ -97,6 +99,8 @@
             o5Bool = true;
 
             numBoxesLeft = 2;
+
+            jumping = false;
         }
 
         initialize();
@@ -273,10 +277,17 @@
                     right = false;
                 }
                 
-                if (e.keyCode == 32) {
+                if (e.keyCode == 13) {
                     sphere.position.y = 1;
                     sphere.position.x = 0;
                     sphere.position.z = 0;
+                }
+                if (e.keyCode == 32 && collisionGround) {
+                    jumping = true;
+                    console.log("jumping");
+                    for (var i = 0; i < 1000; i++) {
+                        sphere.position.y += .01;
+                    }
                 }
              
             });
@@ -285,6 +296,13 @@
             var collisionLowGround = false;
             scene.registerBeforeRender(function () {
                 goal.rotation.y += .01;
+                goal.rotation.z += .01;
+
+                object1.rotation.y += .01;
+                object1.rotation.z += .01;
+
+                object2.rotation.y += .01;
+                object2.rotation.z -= .01;
                 
                 out(numBoxesLeft);
 
@@ -487,12 +505,13 @@
                 var flag = new Array();
                 var count = 0;
                 for (var i = 0; i < groundArray.length; i++) {
-                    if (sphere.intersectsMesh(groundArray[i], true)) {
+                    if (sphere.intersectsMesh(groundArray[i], true) && !jumping) {
                         //console.log("intersecting " + i);
                         flag[count++] = groundArray[i];
                         
                     }
                 }
+                jumping = false;
                 return flag;
             }
 
@@ -625,7 +644,8 @@
                 ground14.position.z = ground13.position.z + 7 * Math.cos(15 * Math.PI / 180);
                 groundArray[14] = ground14;
 
-
+                ground15.position.x = 15;
+                groundArray[15] = ground15;
 
                 return groundArray;
             }
