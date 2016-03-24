@@ -58,6 +58,14 @@
         var dead;
         var gameOver;
 
+        var o1Bool;
+        var o2Bool;
+        var o3Bool;
+        var o4Bool;
+        var o5Bool;
+
+        var numBoxesLeft;
+
 
         function initialize()
         {
@@ -65,6 +73,14 @@
             dead = false;
             gameOver = false;
             countdown( "timer", 1, 5 );
+
+            o1Bool = true;
+            o2Bool = true;
+            o3Bool = true;
+            o4Bool = true;
+            o5Bool = true;
+
+            numBoxesLeft = 2;
         }
 
         initialize();
@@ -88,30 +104,68 @@
 			// This attaches the camera to the canvas
 			scene.activeCamera.attachControl(canvas);
 
-
 			// This creates a light, aiming 0,1,0 - to the sky.
 			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
 			// Dim the light a small amount
 			light.intensity = 1;
 			// Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
 
+			var object1 = BABYLON.Mesh.CreateBox("O1", 1, scene);
+			object1.material = new BABYLON.StandardMaterial("OTexture", scene);
+			object1.material.diffuseColor = new BABYLON.Color3(1,0,0);
+			object1.position.x = 0;
+			object1.position.y = 1;
+			object1.position.z = -5;
+
+			var object2 = BABYLON.Mesh.CreateBox("O2", 1, scene);
+			object2.material = new BABYLON.StandardMaterial("OTexture", scene);
+			object2.material.diffuseColor = new BABYLON.Color3(1,0,0);
+			object2.position.x = 3;
+			object2.position.y = 1;
+			object2.position.z = -5;
 
 			var goal = BABYLON.Mesh.CreateBox("goal", 1, scene);
 			goal.material = new BABYLON.StandardMaterial("goalTexture", scene);
 			goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
-			goal.position.x = 26 + 15 * Math.cos(15 * Math.PI / 180);
-			goal.position.y = 1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
-			goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);			
+			goal.position.x = -2.6//26 + 15 * Math.cos(15 * Math.PI / 180);
+			goal.position.y = 8.5//1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
+			goal.position.z = 33.41//18.5 + 15 * Math.cos(30 * Math.PI / 180);			
 			goal.computeWorldMatrix(true);
-			goal.position.y += 10;
+			//goal.position.y += 10;
+
+
+
+			var outputplane = BABYLON.Mesh.CreatePlane("outputplane", 3, scene, false);				outputplane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+			outputplane.material = new BABYLON.StandardMaterial("outputplane", scene);
+			outputplane.position = new BABYLON.Vector3(goal.position.x, goal.position.y + 3, goal.position.z);
+			outputplane.scaling.y = 0.4;
+
+			var outputplaneTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
+			outputplane.material.diffuseTexture = outputplaneTexture;
+			outputplane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+			outputplane.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+			outputplane.material.backFaceCulling = false;
+
+			outputplaneTexture.drawText("Boxes Left", null, 140, "bold 80px verdana", "white", "#0000AA");
+
+			var context2D = outputplaneTexture.getContext();
+			var out = function(data) {
+				context2D.clearRect(0, 200, 512, 512);
+				outputplaneTexture.drawText(data, null, 380, "140px verdana", "white", null);
+			}
+
+
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
             sphere.position.x = 0
 			sphere.position.y = 1;
 			sphere.position.z = 5;
-sphere.position.y = goal.position.y -7;
-sphere.position.z = goal.position.z;
-sphere.position.x = goal.position.x;
+			sphere.position.y = 23.63 - 8.3;
+			sphere.position.z = 31.49;
+			sphere.position.x = 40.49;
+			console.log(goal.position.x);
+			console.log(goal.position.y);
+			console.log(goal.position.z);
 			sphere.visibility = true;
 			sphere.computeWorldMatrix(true);
 
@@ -219,9 +273,16 @@ sphere.position.x = goal.position.x;
 			var collisionLowGround = false;
 			scene.registerBeforeRender(function () {
 				goal.rotation.y += .01;
+
+				object1.rotation.y += .01;
+				object1.rotation.z += .01;
+
+				object2.rotation.y += .01;
+				object2.rotation.z -= .01;
 				
 				camera.target = sphere.position;
 
+				out(numBoxesLeft);
 				// MOVE FORWARD
 				if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
 					forwardSpeed += 0.02;
@@ -378,17 +439,47 @@ sphere.position.x = goal.position.x;
 					sphere.rotation.x -= backSpeed;
 				}
 				
-				checkFinished(sphere, goal, engine);
+				//console.log(sphere.position.x);
+				//console.log(sphere.position.y);
+				//console.log(sphere.position.z);
+				getObject1(sphere, object1);
+				getObject2(sphere, object2);
+				checkFinished(sphere, goal, outputplane);
 			})
 			return scene;
             }; // End of createScene function
 
-			var checkFinished = function(sphere, goal, engine) {
-				if (sphere.intersectsMesh(goal, false)) {
-					engine.stopRenderLoop();
-					window.setTimeout(function() {
-						window.location.href = "blarg.html";
-					}, 350);
+			var checkFinished = function(sphere, goal, outputplane) {
+				
+
+
+				if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool) {
+					goal.dispose();
+				}
+				else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool)) {
+					outputplane.material.alpha = 1;
+				}
+				else {
+					outputplane.material.alpha = 0;
+				}
+
+			}
+
+			var getObject1 = function(sphere, object1) {
+				if (sphere.intersectsMesh(object1, false) && o1Bool) {
+					o1Bool = false;
+					object1.dispose();
+					object1 = null;
+					numBoxesLeft -= 1;
+				}
+			}
+
+			var getObject2 = function(sphere, object2) {
+				if (sphere.intersectsMesh(object2, false) && o2Bool) {
+					o2Bool = false;
+					object2.dispose();
+					object2 = null;
+					numBoxesLeft -= 1;
 				}
 			}
 			
