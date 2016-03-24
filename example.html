@@ -79,7 +79,8 @@
         var numBoxesLeft;
 
         var jumping;
-
+        var g16up;
+        var g16down;
 
         function initialize()
         {
@@ -102,6 +103,11 @@
             numBoxesLeft = 2;
 
             jumping = false;
+
+            g16up = true;
+            g16down = false;
+
+            var ground16;
         }
 
         initialize();
@@ -131,6 +137,7 @@
             // Dim the light a small amount
             light.intensity = 1;
             // Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
+
 
 
             var object1 = BABYLON.Mesh.CreateBox("O1", 1, scene);
@@ -306,7 +313,25 @@
                 object2.rotation.y += .01;
                 object2.rotation.z -= .01;
                 
+                // Moves ground 16 up and down like an elevator
+                if (g16up) {
+                    ground16.position.y += .1;
+                    if (ground16.position.y > 50) {
+                        g16down = true;
+                        g16up = false;
+                    }
+                }
+                if (g16down) {
+                    ground16.position.y -= .1;
+                    if (ground16.position.y < 3) {
+                        g16down = false;
+                        g16up = true;
+                    }
+                }
+
+                // Shows the number of boxes left at the goal box
                 out(numBoxesLeft);
+
 
                 // MOVE FORWARD
                 if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
@@ -525,8 +550,8 @@
          //       var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
 
 
-                var groundPurpleLava = new BABYLON.StandardMaterial("purpleLava", scene);
-                groundPurpleLava.diffuseTexture = new BABYLON.Texture("pathOne.jpg", scene);
+                var grass = new BABYLON.StandardMaterial("purpleLava", scene);
+                grass.diffuseTexture = new BABYLON.Texture("pathOne.jpg", scene);
 
                 var water = new BABYLON.StandardMaterial("water", scene);
                 water.diffuseTexture = new BABYLON.Texture("waterTwo.jpg", scene);
@@ -546,35 +571,40 @@
 
 
                 var ground1 = new BABYLON.Mesh.CreateGround("ground1", 7, 15, 2, scene);
-                ground1.material = groundPurpleLava;
+                ground1.material = grass;
                 var ground2 = new BABYLON.Mesh.CreateGround("ground2", 7, 15, 2, scene);
-                ground2.material = groundPurpleLava;
+                ground2.material = grass;
                 var ground3 = new BABYLON.Mesh.CreateGround("ground3", 7, 15, 2, scene);
-                ground3.material = groundPurpleLava;
+                ground3.material = grass;
                 var ground4 = new BABYLON.Mesh.CreateGround("ground4", 7, 15, 2, scene);
-                ground4.material = groundPurpleLava;
+                ground4.material = grass;
                 var ground5 = new BABYLON.Mesh.CreateGround("ground5", 15, 7, 2, scene);
-                ground5.material = groundPurpleLava;
+                ground5.material = grass;
                 var ground6 = new BABYLON.Mesh.CreateGround("ground6", 15, 7, 2, scene);
-                ground6.material = groundPurpleLava;
+                ground6.material = grass;
                 var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
-                ground7.material = groundPurpleLava; 
+                ground7.material = grass; 
                 var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
-                ground8.material = groundPurpleLava;
+                ground8.material = grass;
                 var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
-                ground9.material = groundPurpleLava;
+                ground9.material = grass;
                 var ground10 = new BABYLON.Mesh.CreateGround("ground10", 10, 7, 2, scene);
-                ground10.material = groundPurpleLava;
+                ground10.material = grass;
                 var ground11 = new BABYLON.Mesh.CreateGround("ground11", 10, 7, 2, scene);
-                ground11.material = groundPurpleLava;
+                ground11.material = grass;
                 var ground12 = new BABYLON.Mesh.CreateGround("ground12", 10, 7, 2, scene);
-                ground12.material = groundPurpleLava;
+                ground12.material = grass;
                 var ground13 = new BABYLON.Mesh.CreateGround("ground13", 10, 7, 2, scene);
-                ground13.material = groundPurpleLava;
+                ground13.material = grass;
                 var ground14 = new BABYLON.Mesh.CreateGround("ground14", 7, 100, 2, scene);
                 ground14.material = water;
                 var ground15 = new BABYLON.Mesh.CreateGround("ground15", 15, 7, 2, scene);
-                ground15.material = groundPurpleLava;
+                ground15.material = grass;
+                ground16 = new BABYLON.Mesh.CreateGround("ground16", 7, 7, 2, scene);
+                ground16.material = grass;
+                ground17 = new BABYLON.Mesh.CreateGround("ground16", 15, 7, 2, scene);
+                ground17.material = grass;
+
                 
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -655,6 +685,16 @@
 
                 ground15.position.x = 15;
                 groundArray[15] = ground15;
+
+                ground16.position.x = ground8.position.x - 11;
+                ground16.position.y = ground8.position.y;
+                groundArray[16] = ground16;
+
+                ground17.position.x = ground8.position.x;
+                ground17.position.y = 48;
+                ground17.position.z = ground8.position.z - 3;
+                ground17.rotation.y = 45 * Math.PI / 180;
+                groundArray[17] = ground17;
 
                 return groundArray;
             }
