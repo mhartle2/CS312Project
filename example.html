@@ -240,7 +240,7 @@
                         forward = false;
                         back = true;
                     }
-                    // a -x
+                    // a -xwasdw
                     if (e.keyCode == 65) {
                         left = true;
                         right = false;
@@ -250,6 +250,13 @@
                         left = false;
                         right = true;
                     }
+                    if (e.keyCode == 32 && collisionGround) {
+                    jumping = true;
+                    console.log("jumping");
+                    for (var i = 0; i < 1000; i++) {
+                        sphere.position.y += .01;
+                    }
+                }
                 }
             });
             window.addEventListener("keyup", function (e) {
@@ -282,13 +289,7 @@
                     sphere.position.x = 0;
                     sphere.position.z = 0;
                 }
-                if (e.keyCode == 32 && collisionGround) {
-                    jumping = true;
-                    console.log("jumping");
-                    for (var i = 0; i < 1000; i++) {
-                        sphere.position.y += .01;
-                    }
-                }
+                
              
             });
 
