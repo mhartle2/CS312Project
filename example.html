@@ -16,6 +16,12 @@
         height: 100%;
         touch-action: none;
         }
+
+        h1
+        {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+        }
+   
         </style>
         <script src="babylon.js"></script>
         <!--<script src="hand.js"></script>-->
@@ -24,25 +30,26 @@
     <body>
 
     <!-- Need to change to % based instead of actual px. -->
-    <div style="position: absolute;">
-    	<IMG STYLE="position:absolute; TOP:3px; LEFT:3px; WIDTH:65px; HEIGHT:55px;" SRC="Lives.png">
+    <div style="position: absolute; TOP: 1.2%; LEFT: .20%;">
+        <IMG STYLE="position:absolute; WIDTH:100px; HEIGHT:80px;" SRC="Lives.png">
     </div>
 
-    <div style="position: absolute; LEFT: 3%; TOP: 2%;">
-    	<IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesOne" >
+    <div style="position: absolute; LEFT: 4.76%; TOP: 3%;">
+        <IMG style="position:absolute; width:40px; height:30px; " src="Life.jpg" id="livesOne" >
     </div>
 
-    <div style="position: absolute; LEFT: 5%; TOP: 2%;">
-        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesTwo" >
+    <div style="position: absolute; LEFT: 6.75%; TOP: 3%;">
+        <IMG style="position:absolute; width:40px; height:30px; " src="Life.jpg" id="livesTwo" >
     </div>
 
-        <div style="position: absolute; LEFT: 7%; TOP: 2%;">
-        <IMG style="position:absolute; width:34px; height:24px; " src="Life.jpg" id="livesThree" >
+        <div style="position: absolute; LEFT: 8.75%; TOP: 3%;">
+        <IMG style="position:absolute; width:40px; height:30px; " src="Life.jpg" id="livesThree" >
     </div>
 
 
 
-    <div id="timer" style="position:absolute; color:white; TOP: 3%; LEFT: 95%;" font size="30"></div>
+    <div id="timer" style="position:absolute; color:white; TOP: 0.2%; LEFT: 95%;" font size="300" >
+    </div>
 
 
         <canvas id="renderCanvas"></canvas>
@@ -57,15 +64,10 @@
         var lifeCount;
         var dead;
         var gameOver;
+        var camera;
+        var scene;
 
-        var o1Bool;
-        var o2Bool;
-        var o3Bool;
-        var o4Bool;
-        var o5Bool;
-
-        var numBoxesLeft;
-
+        var sphere;
 
         function initialize()
         {
@@ -73,477 +75,386 @@
             dead = false;
             gameOver = false;
             countdown( "timer", 1, 5 );
-
-            o1Bool = true;
-            o2Bool = true;
-            o3Bool = true;
-            o4Bool = true;
-            o5Bool = true;
-
-            numBoxesLeft = 2;
+            scene = new BABYLON.Scene(engine);
+            camera = new BABYLON.ArcRotateCamera("FollowCamera", 4.712, 1, 20, new BABYLON.Vector3(0, 15, -45), scene);
+            sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+            camera.target = sphere.position;
         }
 
         initialize();
 
         var createScene = function () {
         // Now create a basic Babylon Scene object
-			var scene = new BABYLON.Scene(engine);
+
         // Change the scene background color to green.
-			scene.clearColor = new BABYLON.Color3(0.5, .2, 0.6);
+            scene.clearColor = new BABYLON.Color3(0.5, .2, 0.6);
         // This creates and positions a free camera
-			var camera = new BABYLON.ArcRotateCamera("FollowCamera", 4.712, 1, 20, new BABYLON.Vector3(0, 15, -45), scene);
+            //var camera = new BABYLON.ArcRotateCamera("FollowCamera", 4.712, 1, 20, new BABYLON.Vector3(0, 15, -45), scene);
 
-			var groundArray = new Array();
-			//camera.keysUp = [];
-			//camera.keysDown = [];
-			//camera.keysLeft = [];
-			//camera.keysRight = [];
-			//var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-			// This targets the camera to scene origin
-			//camera.setTarget(BABYLON.Vector3.Zero());
-			// This attaches the camera to the canvas
-			scene.activeCamera.attachControl(canvas);
-
-			// This creates a light, aiming 0,1,0 - to the sky.
-			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-			// Dim the light a small amount
-			light.intensity = 1;
-			// Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
-
-			var object1 = BABYLON.Mesh.CreateBox("O1", 1, scene);
-			object1.material = new BABYLON.StandardMaterial("OTexture", scene);
-			object1.material.diffuseColor = new BABYLON.Color3(1,0,0);
-			object1.position.x = 0;
-			object1.position.y = 1;
-			object1.position.z = -5;
-
-			var object2 = BABYLON.Mesh.CreateBox("O2", 1, scene);
-			object2.material = new BABYLON.StandardMaterial("OTexture", scene);
-			object2.material.diffuseColor = new BABYLON.Color3(1,0,0);
-			object2.position.x = 3;
-			object2.position.y = 1;
-			object2.position.z = -5;
-
-			var goal = BABYLON.Mesh.CreateBox("goal", 1, scene);
-			goal.material = new BABYLON.StandardMaterial("goalTexture", scene);
-			goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
-			goal.position.x = -2.6//26 + 15 * Math.cos(15 * Math.PI / 180);
-			goal.position.y = 8.5//1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
-			goal.position.z = 33.41//18.5 + 15 * Math.cos(30 * Math.PI / 180);			
-			goal.computeWorldMatrix(true);
-			//goal.position.y += 10;
+            var groundArray = new Array();
+            //camera.keysUp = [];
+            //camera.keysDown = [];
+            //camera.keysLeft = [];
+            //camera.keysRight = [];
+            //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            // This targets the camera to scene origin
+            //camera.setTarget(BABYLON.Vector3.Zero());
+            // This attaches the camera to the canvas
+            scene.activeCamera.attachControl(canvas);
 
 
-
-			var outputplane = BABYLON.Mesh.CreatePlane("outputplane", 3, scene, false);				outputplane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
-			outputplane.material = new BABYLON.StandardMaterial("outputplane", scene);
-			outputplane.position = new BABYLON.Vector3(goal.position.x, goal.position.y + 3, goal.position.z);
-			outputplane.scaling.y = 0.4;
-
-			var outputplaneTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
-			outputplane.material.diffuseTexture = outputplaneTexture;
-			outputplane.material.specularColor = new BABYLON.Color3(0, 0, 0);
-			outputplane.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
-			outputplane.material.backFaceCulling = false;
-
-			outputplaneTexture.drawText("Boxes Left", null, 140, "bold 80px verdana", "white", "#0000AA");
-
-			var context2D = outputplaneTexture.getContext();
-			var out = function(data) {
-				context2D.clearRect(0, 200, 512, 512);
-				outputplaneTexture.drawText(data, null, 380, "140px verdana", "white", null);
-			}
+            // This creates a light, aiming 0,1,0 - to the sky.
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+            // Dim the light a small amount
+            light.intensity = 1;
+            // Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
 
 
+            var goal = BABYLON.Mesh.CreateBox("goal", 1, scene);
+            goal.material = new BABYLON.StandardMaterial("goalTexture", scene);
+            goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            goal.position.x = 26 + 15 * Math.cos(15 * Math.PI / 180);
+            goal.position.y = 1+ 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
+            goal.position.z = 18.5 + 15 * Math.cos(30 * Math.PI / 180);
+            goal.computeWorldMatrix(true);
+        
+            //CHANGING
 
-			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+            
             sphere.position.x = 0
-			sphere.position.y = 1;
-			sphere.position.z = 5;
-			sphere.position.y = 23.63 - 8.3;
-			sphere.position.z = 31.49;
-			sphere.position.x = 40.49;
-			console.log(goal.position.x);
-			console.log(goal.position.y);
-			console.log(goal.position.z);
-			sphere.visibility = true;
-			sphere.computeWorldMatrix(true);
+            sphere.position.y = 1;
+            sphere.position.z = 5;
+            sphere.visibility = true;
+            sphere.computeWorldMatrix(true);
 
-			camera.target = sphere;
-			scene.activeCamera = camera;
+            camera.target = sphere;
+            scene.activeCamera = camera;
 
-			groundArray = createGround(scene);
-			
-			
-			var materialSphere5 = new BABYLON.StandardMaterial("texture5", scene);
-			materialSphere5.diffuseTexture = new BABYLON.Texture("textures/amiga.jpg", scene);
-			materialSphere5.diffuseTexture.hasAlpha = true;
+            groundArray = createGround(scene);
+            
+            
+            var materialSphere5 = new BABYLON.StandardMaterial("texture5", scene);
+            materialSphere5.diffuseTexture = new BABYLON.Texture("blueFire.jpg", scene);
+            materialSphere5.diffuseTexture.hasAlpha = true;
 
-			sphere.material = materialSphere5;
+            sphere.material = materialSphere5;
 
-			var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
-			var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-			skyboxMaterial.backFaceCulling = false;
-			skyboxMaterial.disableLighting = true;
-			skybox.material = skyboxMaterial;
+            var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
+            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+            skyboxMaterial.backFaceCulling = false;
+            skyboxMaterial.disableLighting = true;
+            skybox.material = skyboxMaterial;
 
-			skybox.infiniteDistance = true;
+            skybox.infiniteDistance = true;
 
-			skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-			skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-			skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skyBox", scene);
-			skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skyBox", scene);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 
-			skybox.renderingGroupId = 0;
+            skybox.renderingGroupId = 0;
 
-			// Leave this function
-			// -z
-			var back = false;
-			// +z
-			var forward = false;
-			// -x
-			var left = false;
-			// +x
-			var right = false;
-			var forwardSpeed = 0;
-			var backSpeed = 0;
-			var rightSpeed = 0;
-			var leftSpeed = 0;
+            // Leave this function
+            // -z
+            var back = false;
+            // +z
+            var forward = false;
+            // -x
+            var left = false;
+            // +x
+            var right = false;
+            var forwardSpeed = 0;
+            var backSpeed = 0;
+            var rightSpeed = 0;
+            var leftSpeed = 0;
 
-			window.addEventListener("keydown", function (e) {
-				// w -z
+            window.addEventListener("keydown", function (e) {
+                // w -z
 
                 if (gameOver == false)
                 {
-				    if (e.keyCode == 87) {
-				    	back = false;
-    					forward = true;
-    				}
-    				// s +z
-    				if (e.keyCode == 83) {
-    					forward = false;
-    					back = true;
-    				}
-    				// a -x
-    				if (e.keyCode == 65) {
-    					left = true;
-    					right = false;
-    				}
-    				// d +x
-    				if (e.keyCode == 68) {
-    					left = false;
-    					right = true;
-    				}
+                    if (e.keyCode == 87) {
+                        back = false;
+                        forward = true;
+                    }
+                    // s +z
+                    if (e.keyCode == 83) {
+                        forward = false;
+                        back = true;
+                    }
+                    // a -x
+                    if (e.keyCode == 65) {
+                        left = true;
+                        right = false;
+                    }
+                    // d +x
+                    if (e.keyCode == 68) {
+                        left = false;
+                        right = true;
+                    }
                 }
-			});
-			window.addEventListener("keyup", function (e) {
-				// w -z
-				
+            });
+            window.addEventListener("keyup", function (e) {
+                // w -z
+                
 
             
                 if (e.keyCode == 87) {
-					back = false;
-					forward = false;
-				}
-				// s +z
-				if (e.keyCode == 83) {
-					forward = false;
-					back = false;
-				}
-				// a -x
-				if (e.keyCode == 65) {
-					left = false;
-					right = false;
-				}
-				// d +x
-				if (e.keyCode == 68) {
-					left = false;
-					right = false;
-				}
-				
-				if (e.keyCode == 32) {
-					sphere.position.y = 1;
-					sphere.position.x = 0;
-					sphere.position.z = 0;
-				}
+                    back = false;
+                    forward = false;
+                }
+                // s +z
+                if (e.keyCode == 83) {
+                    forward = false;
+                    back = false;
+                }
+                // a -x
+                if (e.keyCode == 65) {
+                    left = false;
+                    right = false;
+                }
+                // d +x
+                if (e.keyCode == 68) {
+                    left = false;
+                    right = false;
+                }
+                
+                if (e.keyCode == 32) {
+                    sphere.position.y = 1;
+                    sphere.position.x = 0;
+                    sphere.position.z = 0;
+                }
              
-			});
+            });
 
-			var collisionGround;
-			var collisionLowGround = false;
-			scene.registerBeforeRender(function () {
-				goal.rotation.y += .01;
+            var collisionGround;
+            var collisionLowGround = false;
+            scene.registerBeforeRender(function () {
+                goal.rotation.y += .01;
+                
+        
 
-				object1.rotation.y += .01;
-				object1.rotation.z += .01;
+                // MOVE FORWARD
+                if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
+                    forwardSpeed += 0.02;
+                    //console.log("moving foward");
+                    //sphere.position.z -= .007;
+                } else if (forwardSpeed > 0 && back) {
+                    forwardSpeed -= 0.03;
+                    //console.log("breaking");
+                    //sphere.position.z += .007;
+                } else if (forwardSpeed > 0 && !back) {
+                    // console.log("slowing");
+                    forwardSpeed -= 0.01;
+                }
 
-				object2.rotation.y += .01;
-				object2.rotation.z -= .01;
-				
-				camera.target = sphere.position;
+                // MOVE BACKWARD
+                if (back && backSpeed < 0.5 && forwardSpeed <= 0) {
+                    backSpeed += 0.02;
 
-				out(numBoxesLeft);
-				// MOVE FORWARD
-				if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
-					forwardSpeed += 0.02;
-					//console.log("moving foward");
-					//sphere.position.z -= .007;
-				} else if (forwardSpeed > 0 && back) {
-					forwardSpeed -= 0.03;
-					//console.log("breaking");
-					//sphere.position.z += .007;
-				} else if (forwardSpeed > 0 && !back) {
-					// console.log("slowing");
-					forwardSpeed -= 0.01;
-				}
+                    //sphere.position.z -= .007;
+                } else if (backSpeed > 0 && forward) {
+                    backSpeed -= 0.03;
+                    //sphere.position.z += .007;
+                } else if (backSpeed > 0 && !forward) {
+                    backSpeed -= 0.01;
+                }
 
-				// MOVE BACKWARD
-				if (back && backSpeed < 0.5 && forwardSpeed <= 0) {
-					backSpeed += 0.02;
+                // MOVE LEFT
+                if (left && leftSpeed < 0.5 && rightSpeed <= 0) {
+                    leftSpeed += 0.02;
+                    //console.log("moving foward");
+                    //sphere.position.z -= .007;
+                } else if (leftSpeed > 0 && right) {
+                    leftSpeed -= 0.03;
+                    //console.log("breaking");
+                    //sphere.position.z += .007;
+                } else if (leftSpeed > 0 && !right) {
+                    // console.log("slowing");
+                    leftSpeed -= 0.01;
+                }
 
-					//sphere.position.z -= .007;
-				} else if (backSpeed > 0 && forward) {
-					backSpeed -= 0.03;
-					//sphere.position.z += .007;
-				} else if (backSpeed > 0 && !forward) {
-					backSpeed -= 0.01;
-				}
+                // MOVE RIGHT
+                if (right && rightSpeed < 0.5 && leftSpeed <= 0) {
+                    rightSpeed += 0.02;
+                    //console.log("moving foward");
+                    //sphere.position.z -= .007;
+                } else if (rightSpeed > 0 && left) {
+                    rightSpeed -= 0.03;
+                    //console.log("breaking");
+                    //sphere.position.z += .007;
+                } else if (rightSpeed > 0 && !left) {
+                    // console.log("slowing");
+                    rightSpeed -= 0.01;
+                }
 
-				// MOVE LEFT
-				if (left && leftSpeed < 0.5 && rightSpeed <= 0) {
-					leftSpeed += 0.02;
-					//console.log("moving foward");
-					//sphere.position.z -= .007;
-				} else if (leftSpeed > 0 && right) {
-					leftSpeed -= 0.03;
-					//console.log("breaking");
-					//sphere.position.z += .007;
-				} else if (leftSpeed > 0 && !right) {
-					// console.log("slowing");
-					leftSpeed -= 0.01;
-				}
-
-				// MOVE RIGHT
-				if (right && rightSpeed < 0.5 && leftSpeed <= 0) {
-					rightSpeed += 0.02;
-					//console.log("moving foward");
-					//sphere.position.z -= .007;
-				} else if (rightSpeed > 0 && left) {
-					rightSpeed -= 0.03;
-					//console.log("breaking");
-					//sphere.position.z += .007;
-				} else if (rightSpeed > 0 && !left) {
-					// console.log("slowing");
-					rightSpeed -= 0.01;
-				}
-
-				collisionGround = isTouchingGround(groundArray, sphere);
-				if (collisionGround.length < 1) {
-					collisionGround = false;
-				}
-				
-				
-				var gravityA = .2;
-				var gravityV = .2;
-				gravityV += gravityA;
-				
-				// If not colliding, apply gravity
-				if (!collisionGround) {
-					sphere.position.y -= gravityV;
-				
-				// If so, apply slope gravity
-				} else {
-					collisionLowGround = collisionGround[0];
-					if (collisionGround.length > 1) {
-						if ((collisionGround[0].position.y < collisionGround[1].position.y) && !gravityV) {
-								collisionLowGround = collisionGround[0];
-						} else {
-							collisionLowGround = collisionGround[1];
-						}
-					}
-					sphere.position.y -= gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.sin (-collisionLowGround.rotation.z)
-									   + gravityV * Math.sin(collisionLowGround.rotation.x) * Math.sin(collisionLowGround.rotation.x);
-					sphere.position.x += gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.cos(-collisionLowGround.rotation.z);
-					sphere.position.z += gravityV * Math.sin(collisionLowGround.rotation.x) * Math.cos(collisionLowGround.rotation.x);
-					
-					if ((collisionLowGround.rotation.z + collisionLowGround.rotation.x) == 0) {
-						//console.log( "this" + collisionLowGround.position.y)
-						sphere.position.y = collisionLowGround.position.y + 1;
-					}
-					gravityV = 0;
-					
-				}
-				
-				
+                collisionGround = isTouchingGround(groundArray, sphere);
+                if (collisionGround.length < 1) {
+                    collisionGround = false;
+                }
+                
+                
+                var gravityA = .2;
+                var gravityV = .2;
+                gravityV += gravityA;
+                
+                // If not colliding, apply gravity
+                if (!collisionGround) {
+                    sphere.position.y -= gravityV;
+                
+                // If so, apply slope gravity
+                } else {
+                    collisionLowGround = collisionGround[0];
+                    if (collisionGround.length > 1) {
+                        if ((collisionGround[0].position.y < collisionGround[1].position.y) && !gravityV) {
+                                collisionLowGround = collisionGround[0];
+                        } else {
+                            collisionLowGround = collisionGround[1];
+                        }
+                    }
+                    sphere.position.y -= gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.sin (-collisionLowGround.rotation.z)
+                                       + gravityV * Math.sin(collisionLowGround.rotation.x) * Math.sin(collisionLowGround.rotation.x);
+                    sphere.position.x += gravityV * Math.sin(-collisionLowGround.rotation.z) * Math.cos(-collisionLowGround.rotation.z);
+                    sphere.position.z += gravityV * Math.sin(collisionLowGround.rotation.x) * Math.cos(collisionLowGround.rotation.x);
+                    
+                    if ((collisionLowGround.rotation.z + collisionLowGround.rotation.x) == 0) {
+                        //console.log( "this" + collisionLowGround.position.y)
+                        sphere.position.y = collisionLowGround.position.y + 1;
+                    }
+                    gravityV = 0;
+                    
+                }
+                
+                
 
                 //Death
-                if (sphere.position.y <= -50)
+                if (sphere.position.y <= -40)
                 {
                     dead = true;
                     death();
                     
-                    //Add game reset
-                    sphere.position.x = 0;
-                    sphere.position.y = 1;
-                    sphere.position.z = 5;
+
                 }
 
 
-				
-				var collisionHighGround = false;
-				
-				if (collisionGround.length > 1) {
-					collisionHighGround = (collisionGround[0].position.y > collisionGround[1].position.y) ? collisionGround[0] : collisionGround[1];
-					//console.log(collisionHighGround.position.y + " : " + 
-					//			collisionGround[0].position.y + " : " + collisionGround[1].position.y);
-				} else if (collisionGround.length = 1) {
-					collisionHighGround = collisionGround[0];
-				}
-				
-				//if (forward)
-				if (right || rightSpeed > 0) {
-					if (collisionHighGround) {
-						sphere.position.y += rightSpeed * Math.sin(collisionHighGround.rotation.z);
-						sphere.position.x += rightSpeed * Math.cos(collisionHighGround.rotation.z);
-					} else {
-						sphere.position.x += rightSpeed;
-					}
-					sphere.rotation.z -= rightSpeed;
-				}
-				if (left || leftSpeed > 0) {
-					if (collisionHighGround) {
-						sphere.position.y -= leftSpeed * Math.sin(collisionHighGround.rotation.z);
-						sphere.position.x -= leftSpeed * Math.cos(collisionHighGround.rotation.z);
-					} else {
-						sphere.position.x -= leftSpeed;
-					}
-					sphere.rotation.z += leftSpeed;
-				}
-				if (forward || forwardSpeed > 0) {
-					if (collisionHighGround) {
-						sphere.position.y += forwardSpeed * Math.sin(-collisionHighGround.rotation.x);
-						sphere.position.z += forwardSpeed * Math.cos(-collisionHighGround.rotation.x);
-					} else {
-						sphere.position.z += forwardSpeed;
-					}
-					sphere.rotation.x += forwardSpeed;
-					
-				}
-				if (back || backSpeed > 0) {
-					if (collisionHighGround) {
-						sphere.position.y += backSpeed * Math.sin(collisionHighGround.rotation.x);
-						sphere.position.z -= backSpeed * Math.cos(collisionHighGround.rotation.x);
-					} else {
-						sphere.position.z -= backSpeed;
-					}
-					sphere.rotation.x -= backSpeed;
-				}
-				
-				//console.log(sphere.position.x);
-				//console.log(sphere.position.y);
-				//console.log(sphere.position.z);
-				getObject1(sphere, object1);
-				getObject2(sphere, object2);
-				checkFinished(sphere, goal, outputplane);
-			})
-			return scene;
+                
+                var collisionHighGround = false;
+                
+                if (collisionGround.length > 1) {
+                    collisionHighGround = (collisionGround[0].position.y > collisionGround[1].position.y) ? collisionGround[0] : collisionGround[1];
+                    //console.log(collisionHighGround.position.y + " : " + 
+                    //          collisionGround[0].position.y + " : " + collisionGround[1].position.y);
+                } else if (collisionGround.length = 1) {
+                    collisionHighGround = collisionGround[0];
+                }
+                
+                //if (forward)
+                if (right || rightSpeed > 0) {
+                    if (collisionHighGround) {
+                        sphere.position.y += rightSpeed * Math.sin(collisionHighGround.rotation.z);
+                        sphere.position.x += rightSpeed * Math.cos(collisionHighGround.rotation.z);
+                    } else {
+                        sphere.position.x += rightSpeed;
+                    }
+                    sphere.rotation.z -= rightSpeed;
+                }
+                if (left || leftSpeed > 0) {
+                    if (collisionHighGround) {
+                        sphere.position.y -= leftSpeed * Math.sin(collisionHighGround.rotation.z);
+                        sphere.position.x -= leftSpeed * Math.cos(collisionHighGround.rotation.z);
+                    } else {
+                        sphere.position.x -= leftSpeed;
+                    }
+                    sphere.rotation.z += leftSpeed;
+                }
+                if (forward || forwardSpeed > 0) {
+                    if (collisionHighGround) {
+                        sphere.position.y += forwardSpeed * Math.sin(-collisionHighGround.rotation.x);
+                        sphere.position.z += forwardSpeed * Math.cos(-collisionHighGround.rotation.x);
+                    } else {
+                        sphere.position.z += forwardSpeed;
+                    }
+                    sphere.rotation.x += forwardSpeed;
+                    
+                }
+                if (back || backSpeed > 0) {
+                    if (collisionHighGround) {
+                        sphere.position.y += backSpeed * Math.sin(collisionHighGround.rotation.x);
+                        sphere.position.z -= backSpeed * Math.cos(collisionHighGround.rotation.x);
+                    } else {
+                        sphere.position.z -= backSpeed;
+                    }
+                    sphere.rotation.x -= backSpeed;
+                }
+                
+                checkFinished(sphere, goal, engine);
+            })
+            return scene;
             }; // End of createScene function
 
-			var checkFinished = function(sphere, goal, outputplane) {
-				
-
-
-				if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool) {
-					goal.dispose();
-				}
-				else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool)) {
-					outputplane.material.alpha = 1;
-				}
-				else {
-					outputplane.material.alpha = 0;
-				}
-
-			}
-
-			var getObject1 = function(sphere, object1) {
-				if (sphere.intersectsMesh(object1, false) && o1Bool) {
-					o1Bool = false;
-					object1.dispose();
-					object1 = null;
-					numBoxesLeft -= 1;
-				}
-			}
-
-			var getObject2 = function(sphere, object2) {
-				if (sphere.intersectsMesh(object2, false) && o2Bool) {
-					o2Bool = false;
-					object2.dispose();
-					object2 = null;
-					numBoxesLeft -= 1;
-				}
-			}
-			
+            var checkFinished = function(sphere, goal, engine) {
+                if (sphere.intersectsMesh(goal, false)) {
+                    engine.stopRenderLoop();
+                    window.setTimeout(function() {
+                        window.location.href = "blarg.html";
+                    }, 350);
+                }
+            }
+            
             // Function that checks if ball has collided with the ground
             var isTouchingGround = function (groundArray, sphere) {
-				var flag = new Array();
-				var count = 0;
-				for (var i = 0; i < groundArray.length; i++) {
-					if (sphere.intersectsMesh(groundArray[i], true)) {
-						//console.log("intersecting " + i);
-						flag[count++] = groundArray[i];
-						
-					}
-				}
-				return flag;
+                var flag = new Array();
+                var count = 0;
+                for (var i = 0; i < groundArray.length; i++) {
+                    if (sphere.intersectsMesh(groundArray[i], true)) {
+                        //console.log("intersecting " + i);
+                        flag[count++] = groundArray[i];
+                        
+                    }
+                }
+                return flag;
             }
 
             // Function that creates the ground
             var createGround = function (scene) {
                 var groundArray = new Array();
                 var ground = new BABYLON.Mesh.CreateGround("ground", 7, 15, 2, scene);
-				var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
-				var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
-				groundMaterialBlue.backFaceCulling = false;
-				groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
-				groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                var groundMaterialGreen = new BABYLON.StandardMaterial("groundGreen", scene);
+                var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
 
-				ground.material = groundMaterialGreen;
-				ground.material.backFaceCulling = false;
+
+                var groundPurpleLava = new BABYLON.StandardMaterial("purpleLava", scene);
+                groundPurpleLava.diffuseTexture = new BABYLON.Texture("lavapurple2.jpg", scene);
+
+                groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
+                groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+                ground.material = groundPurpleLava;;
+                ground.material.backFaceCulling = false;
                 groundArray[0] = ground;
 
+
+
+
                 var ground1 = new BABYLON.Mesh.CreateGround("ground1", 7, 15, 2, scene);
-				ground1.material = groundMaterialBlue;
+                ground1.material = groundPurpleLava;
                 var ground2 = new BABYLON.Mesh.CreateGround("ground2", 7, 15, 2, scene);
-				ground2.material = groundMaterialGreen;
+                ground2.material = groundPurpleLava;
                 var ground3 = new BABYLON.Mesh.CreateGround("ground3", 7, 15, 2, scene);
-				ground3.material = groundMaterialBlue;
-				var ground4 = new BABYLON.Mesh.CreateGround("ground4", 7, 15, 2, scene);
-				ground4.material = groundMaterialBlue;
-				var ground5 = new BABYLON.Mesh.CreateGround("ground5", 15, 7, 2, scene);
-				ground5.material = groundMaterialGreen;
-				var ground6 = new BABYLON.Mesh.CreateGround("ground6", 15, 7, 2, scene);
-				ground6.material = groundMaterialBlue;
-				var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
-				ground7.material = groundMaterialBlue; 
-				var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
-				ground8.material = groundMaterialGreen;
-				var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
-				ground9.material = groundMaterialGreen;
-				var ground10 = new BABYLON.Mesh.CreateGround("ground10", 10, 7, 2, scene);
-				ground10.material = groundMaterialGreen;
-				var ground11 = new BABYLON.Mesh.CreateGround("ground11", 10, 7, 2, scene);
-				ground11.material = groundMaterialBlue;
-				var ground12 = new BABYLON.Mesh.CreateGround("ground12", 10, 7, 2, scene);
-				ground12.material = groundMaterialGreen;
-				var ground13 = new BABYLON.Mesh.CreateGround("ground13", 10, 7, 2, scene);
-				ground13.material = groundMaterialBlue;
-				var ground14 = new BABYLON.Mesh.CreateGround("ground14", 7, 100, 2, scene);
-				ground14.material = groundMaterialGreen;
-				var ground15 = new BABYLON.Mesh.CreateGround("ground15", 15, 7, 2, scene);
-				ground15.material = groundMaterialBlue;
-				
-				
-				
+                ground3.material = groundPurpleLava;
+                var ground4 = new BABYLON.Mesh.CreateGround("ground4", 7, 15, 2, scene);
+                ground4.material = groundPurpleLava;
+                var ground5 = new BABYLON.Mesh.CreateGround("ground5", 15, 7, 2, scene);
+                ground5.material = groundPurpleLava;
+                var ground6 = new BABYLON.Mesh.CreateGround("ground6", 15, 7, 2, scene);
+                ground6.material = groundPurpleLava;
+                var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
+                ground7.material = groundPurpleLava; 
+                var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
+                ground8.material = groundPurpleLava;
+                var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
+                ground9.material = groundPurpleLava;
+                
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
                 ground1.position.y = 7.5 * Math.sin(30 * Math.PI / 180);
@@ -558,70 +469,40 @@
                 ground3.position.z = ground2.position.z + 4;
                 ground3.position.x = 11;
                 groundArray[3] = ground3;
-				
-				ground4.rotation.x = 15 * Math.PI / 180;
-				ground4.position.z = -7.5 * Math.cos(15 * Math.PI / 180) - 7.5;
+                
+                ground4.rotation.x = 15 * Math.PI / 180;
+                ground4.position.z = -7.5 * Math.cos(15 * Math.PI / 180) - 7.5;
                 ground4.position.y = 7.5 * Math.sin(15 * Math.PI / 180);
                 groundArray[4] = ground4;
-				
-				ground5.rotation.z = 20 * Math.PI / 180;
-				ground5.position.z = ground3.position.z;
-				ground5.position.x = 18.5 + 7.5 * Math.cos(20 * Math.PI / 180);
+                
+                ground5.rotation.z = 20 * Math.PI / 180;
+                ground5.position.z = ground3.position.z;
+                ground5.position.x = 18.5 + 7.5 * Math.cos(20 * Math.PI / 180);
                 ground5.position.y = 7.5 + 7.5 * Math.sin(20 * Math.PI / 180);
-				groundArray[5] = ground5;
-				
-				ground6.rotation.z = -15 * Math.PI / 180;
-				ground6.position.x = -3.5 - 7.5 * Math.cos(15 * Math.PI / 180);
+                groundArray[5] = ground5;
+                
+                ground6.rotation.z = -15 * Math.PI / 180;
+                ground6.position.x = -3.5 - 7.5 * Math.cos(15 * Math.PI / 180);
                 ground6.position.y = 7.5 * Math.sin(15 * Math.PI / 180);
-				groundArray[6] = ground6;
-				
-				ground7.position.y = ground3.position.y + 15 * Math.sin(20 * Math.PI / 180);
-				ground7.position.z = ground3.position.z;
-				ground7.position.x = 26 + 15 * Math.cos(20 * Math.PI / 180);
-				groundArray[7] = ground7;
-				
-				ground8.position.y = ground6.position.y * 2;
-				ground8.position.z = ground6.position.z * 2;
-				ground8.position.x = -26.35 * Math.cos(15 * Math.PI / 180);
-				groundArray[8] = ground8;
-				
-				ground9.rotation.x -= 30 * Math.PI / 180;
-				ground9.position.x = 16;
+                groundArray[6] = ground6;
+                
+                ground7.position.y = ground3.position.y + 15 * Math.sin(20 * Math.PI / 180);
+                ground7.position.z = ground3.position.z;
+                ground7.position.x = 26 + 15 * Math.cos(20 * Math.PI / 180);
+                groundArray[7] = ground7;
+                
+                ground8.position.y = ground6.position.y * 2;
+                ground8.position.z = ground6.position.z * 2;
+                ground8.position.x = -26.35 * Math.cos(15 * Math.PI / 180);
+                groundArray[8] = ground8;
+                
+                ground9.rotation.x -= 30 * Math.PI / 180;
+                ground9.position.x = 16;
                 ground9.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
                 ground9.position.y = 7.5 * Math.sin(30 * Math.PI / 180);
-				groundArray[9] = ground9;
-				
-				ground10.rotation.x = -15 * Math.PI / 180;
-				ground10.position.x = ground7.position.x + 11;
-				ground10.position.y = ground7.position.y + 3.5 * Math.sin(15 * Math.PI / 180);
-				ground10.position.z = ground7.position.z + 3.5 + 3.5 * Math.cos(15 * Math.PI / 180);
-                groundArray[10] = ground10;
-				
-				ground11.rotation = ground10.rotation;
-				ground11.position.x = ground10.position.x + 9;
-				ground11.position.y = ground10.position.y + 7 * Math.sin(15 * Math.PI / 180);
-				ground11.position.z = ground10.position.z + 7 * Math.cos(15 * Math.PI / 180);
-				groundArray[11] = ground11;
-				
-				ground12.rotation = ground11.rotation;
-				ground12.position.x = ground11.position.x + 9;
-				ground12.position.y = ground11.position.y + 7 * Math.sin(15 * Math.PI / 180);
-				ground12.position.z = ground11.position.z + 7 * Math.cos(15 * Math.PI / 180);
-				groundArray[12] = ground12;
-				
-				ground13.rotation = ground12.rotation;
-				ground13.position.x = ground12.position.x + 9;
-				ground13.position.y = ground12.position.y + 7 * Math.sin(15 * Math.PI / 180);
-				ground13.position.z = ground12.position.z + 7 * Math.cos(15 * Math.PI / 180);
-				groundArray[13] = ground13;
-				
-				ground14.rotation.x = -30 * Math.PI / 180;
-				ground14.position.x = ground13.position.x + 6;
-				ground14.position.y = ground13.position.y + 7 * Math.sin(15 * Math.PI / 180);
-				ground14.position.z = ground13.position.z + 7 * Math.cos(15 * Math.PI / 180);
-				groundArray[14] = ground14;
-				
-				return groundArray;
+                groundArray[9] = ground9;
+
+                return groundArray;
             }
 
             // -------------------------------------------------------------
@@ -650,13 +531,14 @@ function countdown( elementName, minutes, seconds )
     {
         msLeft = endTime - (+new Date);
         if ( msLeft < 1000 ) {
-            element.innerHTML = "countdown's over!";
+            element.innerHTML = "<h1>0:00</h1>";
+            endGame();
         } else {
             time = new Date( msLeft );
             hours = time.getUTCHours();
             mins = time.getUTCMinutes();
-            element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-            setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+            element.innerHTML = '<h1>' + (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+            setTimeout( updateTimer, time.getUTCMilliseconds() + 500 ) + '</h1>';
         }
     }
 
@@ -671,7 +553,6 @@ function countdown( elementName, minutes, seconds )
 
 function death()
 {
-    console.log(lifeCount);
     lifeCount--;
 
     if (lifeCount == 2 && dead == true)
@@ -679,6 +560,9 @@ function death()
         var lifeImage = document.getElementById('livesThree');
         lifeImage.parentNode.removeChild(lifeImage);   
         dead = false; 
+        sphere.position.x = 0;
+        sphere.position.y = 1;
+        sphere.position.z = 5;
     }
 
     else if (lifeCount == 1 && dead == true)
@@ -686,14 +570,49 @@ function death()
         var lifeImage = document.getElementById('livesTwo');
         lifeImage.parentNode.removeChild(lifeImage);    
         dead = false;
+        sphere.position.x = 0;
+        sphere.position.y = 1;
+        sphere.position.z = 5;
     }
 
     else if (lifeCount == 0 && dead == true)
     {
         var lifeImage = document.getElementById('livesOne');
         lifeImage.parentNode.removeChild(lifeImage);    
-        gameOver = true;
+        endGame();
     }
+
+}
+
+function endGame()
+{
+    gameOver = true;
+    var wah = new BABYLON.Sound("WahWahWah", "wah.mp3", scene, function () {
+    wah.play(2);
+
+
+    var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
+    board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+    board.material = new BABYLON.StandardMaterial("Board",scene);
+    board.position = new BABYLON.Vector3(0, 10, 5);
+    board.scaling.y = 0.4;
+
+    board.material.backFaceCulling = false;
+
+    board.material.diffuseTexture = new BABYLON.Texture("gameOverTwo.jpg", scene);
+
+   // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
+  //  board.material.diffuseTexture = boardTexture;
+    //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
+    board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+    board.material.backFaceCulling = true;
+
+   // boardTexture.drawText("Game Over", null, 60, "bold 60px verdana", "white", "#000000", "opacity = 1");
+
+
+    camera.target = board;
+
+    });
 
 }
 
