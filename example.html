@@ -106,12 +106,8 @@
 			goal.position.y += 10;
 
 			var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-            sphere.position.x = 0
-			sphere.position.y = 1;
-			sphere.position.z = 5;
-sphere.position.y = goal.position.y -7;
-sphere.position.z = goal.position.z;
-sphere.position.x = goal.position.x;
+            sphere.position.y = 4.5;
+			sphere.position.z = -20;
 			sphere.visibility = true;
 			sphere.computeWorldMatrix(true);
 
@@ -159,7 +155,7 @@ sphere.position.x = goal.position.x;
 			window.addEventListener("keydown", function (e) {
 				// w -z
 
-                if (gameOver == false)
+                if (gameOver == false && collisionGround)
                 {
 				    if (e.keyCode == 87) {
 				    	back = false;
@@ -222,6 +218,7 @@ sphere.position.x = goal.position.x;
 				
 				camera.target = sphere.position;
 
+				collisionGround = isTouchingGround(groundArray, sphere);
 				// MOVE FORWARD
 				if (forward && forwardSpeed < 0.5 && backSpeed <= 0) {
 					forwardSpeed += 0.02;
@@ -231,9 +228,9 @@ sphere.position.x = goal.position.x;
 					forwardSpeed -= 0.03;
 					//console.log("breaking");
 					//sphere.position.z += .007;
-				} else if (forwardSpeed > 0 && !back) {
+				} else if (forwardSpeed > 0 && !back  && collisionGround) {
 					// console.log("slowing");
-					forwardSpeed -= 0.01;
+					forwardSpeed -= 0.005;
 				}
 
 				// MOVE BACKWARD
@@ -244,8 +241,8 @@ sphere.position.x = goal.position.x;
 				} else if (backSpeed > 0 && forward) {
 					backSpeed -= 0.03;
 					//sphere.position.z += .007;
-				} else if (backSpeed > 0 && !forward) {
-					backSpeed -= 0.01;
+				} else if (backSpeed > 0 && !forward  && collisionGround) {
+					backSpeed -= 0.005;
 				}
 
 				// MOVE LEFT
@@ -257,9 +254,9 @@ sphere.position.x = goal.position.x;
 					leftSpeed -= 0.03;
 					//console.log("breaking");
 					//sphere.position.z += .007;
-				} else if (leftSpeed > 0 && !right) {
+				} else if (leftSpeed > 0 && !right  && collisionGround) {
 					// console.log("slowing");
-					leftSpeed -= 0.01;
+					leftSpeed -= 0.005;
 				}
 
 				// MOVE RIGHT
@@ -271,12 +268,12 @@ sphere.position.x = goal.position.x;
 					rightSpeed -= 0.03;
 					//console.log("breaking");
 					//sphere.position.z += .007;
-				} else if (rightSpeed > 0 && !left) {
+				} else if (rightSpeed > 0 && !left && collisionGround) {
 					// console.log("slowing");
-					rightSpeed -= 0.01;
+					rightSpeed -= 0.005;
 				}
 
-				collisionGround = isTouchingGround(groundArray, sphere);
+				console.log(collisionGround);
 				if (collisionGround.length < 1) {
 					collisionGround = false;
 				}
@@ -322,6 +319,10 @@ sphere.position.x = goal.position.x;
                     death();
                     
                     //Add game reset
+					leftSpeed = 0;
+					rightSpeed = 0;
+					forwardSpeed = 0;
+					backSpeed = 0;
                     sphere.position.x = 0;
                     sphere.position.y = 1;
                     sphere.position.z = 5;
@@ -402,6 +403,10 @@ sphere.position.x = goal.position.x;
 						flag[count++] = groundArray[i];
 						
 					}
+				}
+				if (count == 0) {
+					console.log("yah");
+					return false;
 				}
 				return flag;
             }
@@ -524,9 +529,8 @@ sphere.position.x = goal.position.x;
 				ground13.position.z = ground12.position.z + 7 * Math.cos(15 * Math.PI / 180);
 				groundArray[13] = ground13;
 				
-				ground14.rotation.x = -30 * Math.PI / 180;
-				ground14.position.x = ground13.position.x + 6;
-				ground14.position.y = ground13.position.y + 7 * Math.sin(15 * Math.PI / 180);
+				ground14.position.x = ground13.position.x + 40;
+				ground14.position.y = ground13.position.y + -50;
 				ground14.position.z = ground13.position.z + 7 * Math.cos(15 * Math.PI / 180);
 				groundArray[14] = ground14;
 				
