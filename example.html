@@ -78,6 +78,14 @@
 
         var numBoxesLeft;
 
+
+        var powerBool;
+
+        var powerUpOne;
+
+
+        var particleOne;
+
         var jumping;
         var g16up;
         var g16down;
@@ -94,6 +102,38 @@
             camera.target = sphere.position;
 
 
+            // material
+            var mat = new BABYLON.StandardMaterial("mat1", scene);
+            mat.alpha = 1.0;
+            mat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 1.0);
+            mat.backFaceCulling = false;
+            //mat.wireframe = true; 
+            
+            // simple helix, single path
+            path1 = [];
+            for (var i = 0; i <= 60; i++) {
+                var v = 2.0 * Math.PI * i / 20;
+                path1.push( new BABYLON.Vector3(1.1 * Math.cos(v), i/16, 1.1 * Math.sin(v)) );
+            }
+
+            //var lines = BABYLON.Mesh.CreateLines("helixLines", path1, scene);
+            powerUpOne = BABYLON.Mesh.CreateRibbon("jump", [path1], true, false, 6, scene);
+            powerUpOne.material = mat;
+
+
+            //powerUpOne = BABYLON.Mesh.CreateBox("Shrink", 1, scene);
+            powerUpOne.material = new BABYLON.StandardMaterial("ShrinkTexture", scene);
+            powerUpOne.material.diffuseColor = new BABYLON.Color3(1,0,0);
+            powerUpOne.position.x = 84;
+            powerUpOne.position.y = 43;
+            powerUpOne.position.z = 105;
+
+            particleOne = new BABYLON.ParticleSystem("particles", 2000, scene);
+
+            createParticles();
+
+
+
             o1Bool = true;
             o2Bool = true;
             o3Bool = true;
@@ -101,6 +141,9 @@
             o5Bool = true;
 
             numBoxesLeft = 2;
+
+
+            powerBool = true;
 
             jumping = false;
 
@@ -490,6 +533,7 @@
 
                 getObject1(sphere, object1);
                 getObject2(sphere, object2);
+                powerUp();
                 checkFinished(sphere, goal, outputplane);
             })
             return scene;
@@ -606,7 +650,8 @@
                 ground17.material = grass;
                 var ground18 = new BABYLON.Mesh.CreateGround("ground18", 25, 7, 2, scene);
                 ground18.material = grass;
-
+                var ground19 = new BABYLON.Mesh.CreateGround("ground16", 8, 8, 8, scene);
+                ground19.material = grass;
                 
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -703,6 +748,11 @@
                 ground18.position.z = ground17.position.z;
                 ground18.rotation.z = 40 * Math.PI / 180;
                 groundArray[18] = ground18;
+
+                ground19.position.x = 60;
+                ground19.position.y = 55;
+                ground19.position.z = 105;
+                groundArray[19] = ground19;
 
                 return groundArray;
             }
@@ -841,8 +891,49 @@ function endGame()
         shadowGenerator.getShadowMap().renderList.push(brickblock);
     }
 
+        function createParticles()
+        {
 
 
+
+                    //Texture of each particle
+        particleOne.particleTexture = new BABYLON.Texture("flare.png", scene);
+
+        // Where the particles come from
+        particleOne.emitter = powerUpOne; // the starting object, the emitter
+        particleOne.minEmitBox = new BABYLON.Vector3(-1, 0, 0); // Starting all from
+        particleOne.maxEmitBox = new BABYLON.Vector3(2, 2, 2); // To...
+
+
+
+        particleOne.start();
+            // Colors of all particles
+        particleOne.color1 = new BABYLON.Color4(0.6, 0.9, 1.9, 0.8);
+        particleOne.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+        particleOne.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+
+        // Size of each particle (random between...
+        particleOne.minSize = 0.1;
+        particleOne.maxSize = 0.9;
+
+        // Life time of each particle (random between...
+        particleOne.minLifeTime = 0.3;
+        particleOne.maxLifeTime = 0.8;
+
+        // Emission rate
+        particleOne.emitRate = 1900;
+        }
+
+
+            function powerUp(){
+                if (sphere.intersectsMesh(powerUpOne, false) && powerBool) {
+                  //  powerBool = false;
+                  //  powerUpOne.dispose();
+
+                    sphere.position.y += 150;
+            
+                }
+            }
 
 
         </script>
