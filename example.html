@@ -78,6 +78,7 @@
 
         var numBoxesLeft;
 
+        var collisionGround;
 
         var powerBool;
 
@@ -87,6 +88,7 @@
         var particleOne;
 
         var jumping;
+        var jumpDistance;
         var g16up;
         var g16down;
 
@@ -146,7 +148,7 @@
             powerBool = true;
 
             jumping = false;
-
+            jumpDistance = 0;
             g16up = true;
             g16down = false;
 
@@ -280,7 +282,7 @@
 
             window.addEventListener("keydown", function (e) {
                 // w -z
-                if (gameOver == false && collisionGround)
+                if (gameOver == false)
                 {
                     if (e.keyCode == 87) {
                         back = false;
@@ -302,8 +304,10 @@
                         right = true;
                     }
                     if (e.keyCode == 32 && collisionGround) {
-                        jumping = 10;
-                        console.log("jumping");
+                        jumping = true;
+                        if (jumpDistance == 0) {
+                            jumpDistance = sphere.position.y;                            
+                        }
                         
                     }
                 }
@@ -343,7 +347,7 @@
 
             });
 
-            var collisionGround;
+            
             var collisionLowGround = false;
 			
             var gravityV = 0;
@@ -431,25 +435,35 @@
                     rightSpeed -= 0.01;
                 }
 				
-				if (jumping > 0) {
-					sphere.position.y += jumping;
-				}
+				//if (jumping > 0) {
+				//	sphere.position.y += jumping;
+				//}
 
                 collisionGround = isTouchingGround(groundArray, sphere);
                 if (collisionGround.length < 1) {
                     collisionGround = false;
                 }
                 
-                
+                console.log(jumpDistance);
                 var gravityA = .02;
                 gravityV += gravityA;
-                
+            
                 // If not colliding, apply gravity
-                if (!collisionGround) {
+                if (!collisionGround && !jumping) {
                     sphere.position.y -= gravityV;
-                
+                    //console.log("falling");
                 // If so, apply slope gravity
-                } else {
+                } 
+                else if (jumping) {
+                    console.log(gravityV);
+                    sphere.position.y += .5;
+                    if (sphere.position.y - jumpDistance > 8) {
+                        jumping = false;
+                        jumpDistance = 0;
+                    }
+                    //console.log("jumping");
+                }
+                else {
 					gravityV = .2;
                     collisionLowGround = collisionGround[0];
                     if (collisionGround.length > 1) {
@@ -480,10 +494,10 @@
                     dead = true;
                     death();
                     
-	backSpeed = 0;
-	forwardSpeed = 0;
-	leftSpeed = 0;
-	rightSpeed = 0;
+                	backSpeed = 0;
+                	forwardSpeed = 0;
+                	leftSpeed = 0;
+                	rightSpeed = 0;
 
 
                 }
@@ -538,7 +552,7 @@
                     }
                     sphere.rotation.x -= backSpeed;
                 }
-                
+                console.log(jumping);
 
                 getObject1(sphere, object1);
                 getObject2(sphere, object2);
@@ -592,7 +606,7 @@
                         
                     }
                 }
-                jumping = false;
+                //jumping = false;
                 return flag;
             }
 
