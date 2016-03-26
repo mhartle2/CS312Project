@@ -145,7 +145,7 @@
             numBoxesLeft = 2;
 
 
-            powerBool = true;
+            powerBool = false;
 
             jumping = false;
             jumpDistance = 0;
@@ -444,24 +444,31 @@
                     collisionGround = false;
                 }
                 
-                console.log(jumpDistance);
-                var gravityA = .02;
+                //console.log(jumpDistance);
+                var gravityA = .01;
                 gravityV += gravityA;
             
                 // If not colliding, apply gravity
-                if (!collisionGround && !jumping) {
+                if (!collisionGround && !jumping && !powerBool) {
                     sphere.position.y -= gravityV;
                     //console.log("falling");
                 // If so, apply slope gravity
                 } 
                 else if (jumping) {
-                    console.log(gravityV);
-                    sphere.position.y += .5;
+                    //console.log(gravityV);
+                    sphere.position.y += .3;
                     if (sphere.position.y - jumpDistance > 8) {
                         jumping = false;
                         jumpDistance = 0;
                     }
                     //console.log("jumping");
+                }
+                else if (powerBool) {
+                    sphere.position.y += 3;
+                    if (sphere.position.y - jumpDistance > 60) {
+                        powerBool = false;
+                        jumpDistance = 0;
+                    }
                 }
                 else {
 					gravityV = .2;
@@ -917,47 +924,45 @@ function endGame()
 
         function createParticles()
         {
-
-
-
                     //Texture of each particle
-        particleOne.particleTexture = new BABYLON.Texture("flare.png", scene);
+            particleOne.particleTexture = new BABYLON.Texture("flare.png", scene);
 
-        // Where the particles come from
-        particleOne.emitter = powerUpOne; // the starting object, the emitter
-        particleOne.minEmitBox = new BABYLON.Vector3(-1, 0, 0); // Starting all from
-        particleOne.maxEmitBox = new BABYLON.Vector3(2, 2, 2); // To...
+            // Where the particles come from
+            particleOne.emitter = powerUpOne; // the starting object, the emitter
+            particleOne.minEmitBox = new BABYLON.Vector3(-1, 0, 0); // Starting all from
+            particleOne.maxEmitBox = new BABYLON.Vector3(2, 2, 2); // To...
 
 
 
-        particleOne.start();
-            // Colors of all particles
-        particleOne.color1 = new BABYLON.Color4(0.6, 0.9, 1.9, 0.8);
-        particleOne.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-        particleOne.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+            particleOne.start();
+                // Colors of all particles
+            particleOne.color1 = new BABYLON.Color4(0.6, 0.9, 1.9, 0.8);
+            particleOne.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+            particleOne.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
 
-        // Size of each particle (random between...
-        particleOne.minSize = 0.1;
-        particleOne.maxSize = 0.9;
+            // Size of each particle (random between...
+            particleOne.minSize = 0.1;
+            particleOne.maxSize = 0.9;
 
-        // Life time of each particle (random between...
-        particleOne.minLifeTime = 0.3;
-        particleOne.maxLifeTime = 0.8;
+            // Life time of each particle (random between...
+            particleOne.minLifeTime = 0.3;
+            particleOne.maxLifeTime = 0.8;
 
-        // Emission rate
-        particleOne.emitRate = 1900;
+            // Emission rate
+            particleOne.emitRate = 1900;
         }
 
 
-            function powerUp(){
-                if (sphere.intersectsMesh(powerUpOne, false) && powerBool) {
+        function powerUp(){
+            if (sphere.intersectsMesh(powerUpOne, false) && collisionGround) {
                   //  powerBool = false;
                   //  powerUpOne.dispose();
-
-                    sphere.position.y += 150;
-            
+                powerBool = true;
+                if (jumpDistance == 0) {
+                    jumpDistance = sphere.position.y;                            
                 }
             }
+        }
 
 
         </script>
