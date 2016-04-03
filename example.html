@@ -632,7 +632,7 @@
                 if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool && !o3Bool && !o4Bool && !o5Bool) {
                     goal.dispose();
                 }
-                else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool)) {
+                else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool || o3Bool || o4Bool || o5Bool)) {
                     outputplane.material.alpha = 1;
                 }
                 else {
