@@ -221,7 +221,8 @@
 
             var goal = BABYLON.Mesh.CreateBox("goal", 1, scene);
             goal.material = new BABYLON.StandardMaterial("goalTexture", scene);
-            goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            //goal.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            goal.material.diffuseTexture = new BABYLON.Texture("finished.jpg", scene);
             goal.position.x = -2.6//26 + 15 * Math.cos(15 * Math.PI / 180);
             goal.position.y = 8.5//1 + 15 * Math.sin(30 * Math.PI / 180) + 15 * Math.sin(20 * Math.PI / 180);
             goal.position.z = 33.41//18.5 + 15 * Math.cos(30 * Math.PI / 180);
