@@ -139,7 +139,7 @@
             o4Bool = true;
             o5Bool = true;
 
-            numBoxesLeft = 3;
+            numBoxesLeft = 5;
 
 
             powerBool = false;
@@ -150,6 +150,7 @@
             g16down = false;
 
             var ground16;
+            var ground39;
         }
 
         initialize();
@@ -197,13 +198,26 @@
             object2.position.y = -2;
             object2.position.z = 23;
 
-            var object3 = BABYLON.Mesh.CreateBox("O2", 1, scene);
+            var object3 = BABYLON.Mesh.CreateBox("O3", 1, scene);
             object3.material = new BABYLON.StandardMaterial("OTexture", scene);
             object3.material.diffuseColor = new BABYLON.Color3(1,0,0);
             object3.position.x = 60;
             object3.position.y = 56;
             object3.position.z = 105;
 
+            var object4 = BABYLON.Mesh.CreateBox("O4", 1, scene);
+            object4.material = new BABYLON.StandardMaterial("OTexture", scene);
+            object4.material.diffuseColor = new BABYLON.Color3(1,0,0);
+            object4.position.x = 58.83;
+            object4.position.y = 71.3;
+            object4.position.z = -18.2;
+
+            var object5 = BABYLON.Mesh.CreateBox("O5", 1, scene);
+            object5.material = new BABYLON.StandardMaterial("OTexture", scene);
+            object5.material.diffuseColor = new BABYLON.Color3(1,0,0);
+            object5.position.x = 60.5;
+            object5.position.y = 79;
+            object5.position.z = -95.48;
 
             var goal = BABYLON.Mesh.CreateBox("goal", 1, scene);
             goal.material = new BABYLON.StandardMaterial("goalTexture", scene);
@@ -329,10 +343,6 @@
                         if (jumpDistance == 0) {
                             jumpDistance = sphere.position.y;                            
                         }
-                        console.log(camera.position.x);
-                        console.log(camera.position.y);
-                        console.log(camera.position.z);
-                        console.log(camera.position);
 
 
                         var relativeCameraOffset = new BABYLON.Vector3(0, 50, 200);
@@ -392,10 +402,18 @@
 
                 object3.rotation.y += .01;
                 object3.rotation.z -= .01;
+
+                object4.rotation.y += .01;
+                object4.rotation.z += .01;
+
+                object5.rotation.y += .01;
+                object5.rotation.z += .01;
                 
                 // Moves ground 16 up and down like an elevator
                 if (g16up) {
                     ground16.position.y += .1;
+                    ground39.position.y += .1;
+                    ground39.position.x += .1;
                     if (ground16.position.y > 50) {
                         g16down = true;
                         g16up = false;
@@ -403,6 +421,8 @@
                 }
                 if (g16down) {
                     ground16.position.y -= .1;
+                    ground39.position.y -= .1;
+                    ground39.position.x -= .1;
                     if (ground16.position.y < 3) {
                         g16down = false;
                         g16up = true;
@@ -540,8 +560,6 @@
 
 
                 }
-
-
                 
                 var collisionHighGround = false;
                 
@@ -598,10 +616,11 @@
                 //console.log(BABYLON.Axis.Y);
                 //console.log(BABYLON.Axis.Z);
 
-
                 getObject1(sphere, object1);
                 getObject2(sphere, object2);
                 getObject3(sphere, object3);
+                getObject4(sphere, object4);
+                getObject5(sphere, object5);
                 powerUp();
                 checkFinished(sphere, goal, outputplane);
             })
@@ -610,7 +629,7 @@
 
             var checkFinished = function(sphere, goal, outputplane) {
               
-                if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool && !o3Bool) {
+                if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool && !o3Bool && !o4Bool && !o5Bool) {
                     goal.dispose();
                 }
                 else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool)) {
@@ -648,6 +667,24 @@
                     numBoxesLeft -= 1;
                 }
             }
+
+            var getObject4 = function(sphere, object4) {
+                if (sphere.intersectsMesh(object4, false) && o4Bool) {
+                    o4Bool = false;
+                    object4.dispose();
+                    object4 = null;
+                    numBoxesLeft -= 1;
+                }
+            }
+
+            var getObject5 = function(sphere, object5) {
+                if (sphere.intersectsMesh(object5, false) && o5Bool) {
+                    o5Bool = false;
+                    object5.dispose();
+                    object5 = null;
+                    numBoxesLeft -= 1;
+                }
+            }
             
             // Function that checks if ball has collided with the ground
             var isTouchingGround = function (groundArray, sphere) {
@@ -673,20 +710,34 @@
          //       var groundMaterialBlue = new BABYLON.StandardMaterial("groundBlue", scene)
 
 
-                var grass = new BABYLON.StandardMaterial("purpleLava", scene);
-                grass.diffuseTexture = new BABYLON.Texture("pathOne.jpg", scene);
+                var wood1 = new BABYLON.StandardMaterial("wood", scene);
+                wood1.diffuseTexture = new BABYLON.Texture("woodOne.jpg", scene);
 
                 var water = new BABYLON.StandardMaterial("water", scene);
                 water.diffuseTexture = new BABYLON.Texture("waterTwo.jpg", scene);
 
-                var grass = new BABYLON.StandardMaterial("grass", scene);
-                grass.diffuseTexture = new BABYLON.Texture("grassFour.jpg", scene);
+                var grass1 = new BABYLON.StandardMaterial("grass", scene);
+                grass1.diffuseTexture = new BABYLON.Texture("grassOne.jpg", scene);
 
+                var grass2 = new BABYLON.StandardMaterial("grass", scene);
+                grass2.diffuseTexture = new BABYLON.Texture("grassTwo.jpg", scene);
+
+                var grass3 = new BABYLON.StandardMaterial("grass", scene);
+                grass3.diffuseTexture = new BABYLON.Texture("grassThree.jpg", scene);
+
+                var grass4 = new BABYLON.StandardMaterial("grass", scene);
+                grass4.diffuseTexture = new BABYLON.Texture("grassFour.jpg", scene);
+
+                var grass5 = new BABYLON.StandardMaterial("grass", scene);
+                grass5.diffuseTexture = new BABYLON.Texture("grassFive.jpg", scene);
+
+                var grass6 = new BABYLON.StandardMaterial("grass", scene);
+                grass6.diffuseTexture = new BABYLON.Texture("grassSix.jpg", scene);
 
             //    groundMaterialBlue.diffuseColor = new BABYLON.Color3(0, 0, 1);
             //    groundMaterialGreen.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
-                ground.material = grass;
+                ground.material = grass2;
                 ground.material.backFaceCulling = false;
                 groundArray[0] = ground;
 
@@ -694,43 +745,43 @@
 
 
                 var ground1 = new BABYLON.Mesh.CreateGround("ground1", 7, 15, 2, scene);
-                ground1.material = grass;
+                ground1.material = grass2;
                 var ground2 = new BABYLON.Mesh.CreateGround("ground2", 7, 15, 2, scene);
-                ground2.material = grass;
+                ground2.material = grass2;
                 var ground3 = new BABYLON.Mesh.CreateGround("ground3", 7, 15, 2, scene);
-                ground3.material = grass;
+                ground3.material = grass2;
                 var ground4 = new BABYLON.Mesh.CreateGround("ground4", 7, 15, 2, scene);
-                ground4.material = grass;
+                ground4.material = grass2;
                 var ground5 = new BABYLON.Mesh.CreateGround("ground5", 15, 7, 2, scene);
-                ground5.material = grass;
+                ground5.material = grass2;
                 var ground6 = new BABYLON.Mesh.CreateGround("ground6", 15, 7, 2, scene);
-                ground6.material = grass;
+                ground6.material = grass2;
                 var ground7 = new BABYLON.Mesh.CreateGround("ground7", 15, 7, 2, scene);
-                ground7.material = grass; 
+                ground7.material = grass2; 
                 var ground8 = new BABYLON.Mesh.CreateGround("ground8", 15, 7, 2, scene);
-                ground8.material = grass;
+                ground8.material = grass2;
                 var ground9 = new BABYLON.Mesh.CreateGround("ground9", 25, 7, 2, scene);
-                ground9.material = grass;
+                ground9.material = grass2;
                 var ground10 = new BABYLON.Mesh.CreateGround("ground10", 10, 7, 2, scene);
-                ground10.material = grass;
+                ground10.material = grass2;
                 var ground11 = new BABYLON.Mesh.CreateGround("ground11", 10, 7, 2, scene);
-                ground11.material = grass;
+                ground11.material = grass2;
                 var ground12 = new BABYLON.Mesh.CreateGround("ground12", 10, 7, 2, scene);
-                ground12.material = grass;
+                ground12.material = grass2;
                 var ground13 = new BABYLON.Mesh.CreateGround("ground13", 10, 7, 2, scene);
-                ground13.material = grass;
+                ground13.material = grass2;
                 var ground14 = new BABYLON.Mesh.CreateGround("ground14", 7, 100, 2, scene);
-                ground14.material = water;
+                ground14.material = grass2;
                 var ground15 = new BABYLON.Mesh.CreateGround("ground15", 4, 15, 2, scene);
-                ground15.material = grass;
+                ground15.material = grass2;
                 ground16 = new BABYLON.Mesh.CreateGround("ground16", 7, 7, 2, scene);
-                ground16.material = grass;
+                ground16.material = grass2;
                 var ground17 = new BABYLON.Mesh.CreateGround("ground17", 15, 7, 2, scene);
-                ground17.material = grass;
+                ground17.material = grass2;
                 var ground18 = new BABYLON.Mesh.CreateGround("ground18", 25, 7, 2, scene);
-                ground18.material = grass;
-                var ground19 = new BABYLON.Mesh.CreateGround("ground16", 8, 8, 8, scene);
-                ground19.material = grass;
+                ground18.material = grass2;
+                var ground19 = new BABYLON.Mesh.CreateGround("ground19", 8, 8, 8, scene);
+                ground19.material = grass2;
                 
                 ground1.rotation.x -= 30 * Math.PI / 180;
                 ground1.position.z = 7.5 * Math.cos(30 * Math.PI / 180) + 7.5;
@@ -806,7 +857,6 @@
                 
                 ground14.rotation.x = -30 * Math.PI / 180;
                 ground14.position.x = ground13.position.x + 6;
-                console.log(ground14.position.x);
                 ground14.position.y = ground13.position.y + 7 * Math.sin(15 * Math.PI / 180);
                 ground14.position.z = ground13.position.z + 7 * Math.cos(15 * Math.PI / 180);
                 groundArray[14] = ground14;
@@ -838,34 +888,162 @@
                 ground19.position.z = 105;
                 groundArray[19] = ground19;
 
-                var ground20 = new BABYLON.Mesh.CreateGround("ground16", 4, 4, 8, scene);
-                ground20.material = grass;
+                var ground20 = new BABYLON.Mesh.CreateGround("ground20", 4, 4, 8, scene);
+                ground20.material = grass2;
                 ground20.position.x = ground15.position.x;
                 ground20.position.z = -3.99;
                 ground20.position.y = -5.5;
                 groundArray[20] = ground20;
 
-                var ground21 = new BABYLON.Mesh.CreateGround("ground16", 30, 4, 8, scene);
-                ground21.material = grass;
+                var ground21 = new BABYLON.Mesh.CreateGround("ground21", 30, 4, 8, scene);
+                ground21.material = grass2;
                 ground21.position.x = 40.79;
                 ground21.position.y = 3.1;
                 ground21.position.z = -3.99
                 ground21.rotation.z = 35 * Math.PI / 180;
                 groundArray[21] = ground21;
 
-                var ground22 = new BABYLON.Mesh.CreateGround("ground16", 4, 4, 8, scene);
-                ground22.material = grass;
+                var ground22 = new BABYLON.Mesh.CreateGround("ground22", 4, 4, 8, scene);
+                ground22.material = grass2;
                 ground22.position.x = 55.07;
                 ground22.position.y = 11.7;
                 ground22.position.z = ground21.position.z;
                 groundArray[22] = ground22;
 
-                var ground23 = new BABYLON.Mesh.CreateGround("ground16", 15, 4, 8, scene);
-                ground23.material = grass;
+                var ground23 = new BABYLON.Mesh.CreateGround("ground23", 15, 4, 8, scene);
+                ground23.material = grass2;
                 ground23.position.x = ground22.position.x - 5.5;
                 ground23.position.y = ground22.position.y;
                 ground23.position.z = ground22.position.z - 4;
                 groundArray[23] = ground23;
+
+                var ground24 = new BABYLON.Mesh.CreateGround("ground24", 15, 7, 8, scene);
+                ground24.material = grass2;
+                ground24.position.x = ground18.position.x + 17;
+                ground24.position.y = ground18.position.y + 8
+                ground24.position.z = ground18.position.z;
+                groundArray[24] = ground24;
+
+                var ground25 = new BABYLON.Mesh.CreateGround("ground25", 15, 7, 8, scene);
+                ground25.material = grass2;
+                ground25.position.x = ground24.position.x + 15;
+                ground25.position.y = ground24.position.y;
+                ground25.position.z = ground24.position.z - 11;
+                ground25.rotation.y = 45 * Math.PI / 180;
+                groundArray[25] = ground25;
+
+                var ground26 = new BABYLON.Mesh.CreateGround("ground26", 7.5, 7, 8, scene);
+                ground26.material = grass2;
+                ground26.position.x = ground25.position.x + 7.95;
+                ground26.position.y = ground25.position.y;
+                ground26.position.z = ground25.position.z + 2.3;
+                ground26.rotation.y = -45 * Math.PI / 180;
+                groundArray[26] = ground26;
+
+                var ground27 = new BABYLON.Mesh.CreateGround("ground27", 7.5, 5, 8, scene);
+                ground27.material = grass2;
+                ground27.position.x = ground26.position.x + 6;
+                ground27.position.y = ground26.position.y;
+                ground27.position.z = ground26.position.z - 4.2;
+                ground27.rotation.y = 45 * Math.PI / 180;
+                groundArray[27] = ground27;
+
+                var ground28 = new BABYLON.Mesh.CreateGround("ground28", 7.5, 3, 8, scene);
+                ground28.material = grass2;
+                ground28.position.x = ground27.position.x + 6
+                ground28.position.y = ground27.position.y;
+                ground28.position.z = ground27.position.z + 2.8;
+                ground28.rotation.y = -45 * Math.PI / 180;
+                groundArray[28] = ground28;
+
+                var ground29 = new BABYLON.Mesh.CreateGround("ground29", 7.5, 1.5, 8, scene);
+                ground29.material = grass2;
+                ground29.position.x = ground28.position.x + 5.83;
+                ground29.position.y = ground28.position.y;
+                ground29.position.z = ground28.position.z - 1.6;
+                ground29.rotation.y = 45 * Math.PI / 180;
+                groundArray[29] = ground29;
+
+                var ground30 = new BABYLON.Mesh.CreateGround("ground30", 3, 3, 8, scene);
+                ground30.material = grass2;
+                ground30.position.x = ground29.position.x + 3.5;
+                ground30.position.y = ground29.position.y + 4;
+                ground30.position.z = ground29.position.z - 3.5;
+                ground30.rotation.y = 45 * Math.PI / 180;
+                groundArray[30] = ground30;
+
+                var ground31 = new BABYLON.Mesh.CreateGround("ground31", 7, 70, 8, scene);
+                ground31.material = grass2;
+                ground31.position.y = 3.88;
+                ground31.position.z = -56.98;
+                groundArray[31] = ground31;
+
+                var ground32 = new BABYLON.Mesh.CreateGround("ground32", 7, 7, 8, scene);
+                ground32.material  = grass2;
+                ground32.position.x = -7;
+                ground32.position.y = ground31.position.y;
+                ground32.position.z = ground31.position.z - 31.5;
+                groundArray[32] = ground32;
+
+                var ground33 = new BABYLON.Mesh.CreateGround("ground33", 7, 7, 8, scene);
+                ground33.material = grass2;
+                ground33.position.x = ground32.position.x;
+                ground33.position.y = ground32.position.y + 4;
+                ground33.position.z = ground32.position.z - 7;
+                groundArray[33] = ground33;
+
+                var ground34 = new BABYLON.Mesh.CreateGround("ground34", 7, 7, 8, scene);
+                ground34.material = grass2;
+                ground34.position.x = ground33.position.x + 7;
+                ground34.position.y = ground33.position.y + 4;
+                ground34.position.z = ground33.position.z;
+                groundArray[34] = ground34;
+
+                var ground35 = new BABYLON.Mesh.CreateGround("ground35", 7, 7, 8, scene);
+                ground35.material = grass2;
+                ground35.position.x = ground34.position.x;
+                ground35.position.y = ground34.position.y + 4;
+                ground35.position.z = ground34.position.z + 7;
+                groundArray[35] = ground35;
+
+                var ground36 = new BABYLON.Mesh.CreateGround("ground36", 7, 7, 8, scene);
+                ground36.material = grass2;
+                ground36.position.x = ground35.position.x - 7;
+                ground36.position.y = ground35.position.y + 4;
+                ground36.position.z = ground35.position.z;
+                groundArray[36] = ground36;
+
+                var ground37 = new BABYLON.Mesh.CreateGround("ground37", 7, 7, 8, scene);
+                ground37.material = grass2;
+                ground37.position.x = ground33.position.x;
+                ground37.position.y = ground36.position.y + 4;
+                ground37.position.z = ground33.position.z;
+                groundArray[37] = ground37;
+
+                var ground38 = new BABYLON.Mesh.CreateGround("ground38", 7, 7, 8, scene);
+                ground38.material = grass2;
+                ground38.position.x = ground34.position.x;
+                ground38.position.y = ground37.position.y + 4;
+                ground38.position.z = ground34.position.z;
+                groundArray[38] = ground38;
+
+                ground39 = new BABYLON.Mesh.CreateGround("ground39", 7, 7, 8, scene);
+                ground39.material = grass2;
+                ground39.position.x = ground34.position.x + 7;
+                ground39.position.y = ground38.position.y;
+                ground39.position.z = ground34.position.z;
+                groundArray[39] = ground39;
+
+                ground40 = new BABYLON.Mesh.CreateGround("ground40", 7, 7, 8, scene);
+                ground40.material = grass2;
+                ground40.position.x = ground39.position.x + 53.5;
+                ground40.position.y = ground39.position.y + 50;
+                ground40.position.z = ground39.position.z;
+                groundArray[40] = ground40;
+
+                console.log(ground40.position.x);
+                console.log(ground40.position.y);
+                console.log(ground40.position.z);
 
                 return groundArray;
             }
