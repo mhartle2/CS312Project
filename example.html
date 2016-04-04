@@ -91,6 +91,9 @@
         var g16up;
         var g16down;
 
+        var youWin;
+        var onlyonerun;
+
         function initialize()
         {
             var groundArray = new Array();
@@ -148,6 +151,9 @@
             jumpDistance = 0;
             g16up = true;
             g16down = false;
+
+            youWin = false;
+            onlyonerun = true;
 
             var ground16;
             var ground39;
@@ -248,26 +254,6 @@
                 context2D.clearRect(0, 200, 512, 512);
                 outputplaneTexture.drawText(data, null, 380, "140px verdana", "white", null);
             }
-
-            var size = 2;
-            var pilot_local_axisX = BABYLON.Mesh.CreateLines("pilot_local_axisX", [ 
-                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0), 
-                new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
-                ], scene);
-            pilot_local_axisX.color = new BABYLON.Color3(1, 0, 0);
-
-            pilot_local_axisY = BABYLON.Mesh.CreateLines("pilot_local_axisY", [
-                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(-0.05 * size, size * 0.95, 0),
-                new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(0.05 * size, size * 0.95, 0)
-                ], scene);
-            pilot_local_axisY.color = new BABYLON.Color3(0, 1, 0);
-
-            var pilot_local_axisZ = BABYLON.Mesh.CreateLines("pilot_local_axisZ", [
-                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0 , -0.05 * size, size * 0.95),
-                new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0, 0.05 * size, size * 0.95)
-                ], scene);
-            pilot_local_axisZ.color = new BABYLON.Color3(0, 0, 1);
-
             
             sphere.position.x = 0
             sphere.position.y = 1;
@@ -631,7 +617,9 @@
             var checkFinished = function(sphere, goal, outputplane) {
               
                 if (sphere.intersectsMesh(goal, false) && !o1Bool && !o2Bool && !o3Bool && !o4Bool && !o5Bool) {
+                    winner();
                     goal.dispose();
+                    goal = null;
                 }
                 else if (sphere.intersectsMesh(goal, false) && (o1Bool || o2Bool || o3Bool || o4Bool || o5Bool)) {
                     outputplane.material.alpha = 1;
@@ -1130,36 +1118,64 @@ function death()
 function endGame()
 {
     gameOver = true;
-    var wah = new BABYLON.Sound("WahWahWah", "wah.mp3", scene, function () {
-    wah.play(2);
+
+    if (!youWin) {
+        var wah = new BABYLON.Sound("WahWahWah", "wah.mp3", scene, function () {
+            wah.play(2);
 
 
-    var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
-    board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
-    board.material = new BABYLON.StandardMaterial("Board",scene);
-    board.position = new BABYLON.Vector3(0, 10, 5);
-    board.scaling.y = 0.4;
+            var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
+            board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+            board.material = new BABYLON.StandardMaterial("Board",scene);
+            board.position = new BABYLON.Vector3(0, 10, 5);
+            board.scaling.y = 0.4;
 
-    board.material.backFaceCulling = false;
+            board.material.backFaceCulling = false;
 
-    board.material.diffuseTexture = new BABYLON.Texture("gameOverTwo.jpg", scene);
+            board.material.diffuseTexture = new BABYLON.Texture("gameOverTwo.jpg", scene);
 
-   // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
-  //  board.material.diffuseTexture = boardTexture;
-    //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
-    board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
-    board.material.backFaceCulling = true;
+           // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
+          //  board.material.diffuseTexture = boardTexture;
+            //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
+            board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+            board.material.backFaceCulling = true;
 
-   // boardTexture.drawText("Game Over", null, 60, "bold 60px verdana", "white", "#000000", "opacity = 1");
+           // boardTexture.drawText("Game Over", null, 60, "bold 60px verdana", "white", "#000000", "opacity = 1");
 
 
-    camera.target = board;
+            camera.target = board;
 
-    });
 
+        });
+    }
 }
 
+function winner() {
+    gameOver = true;
+    youWin = true;
+    if (onlyonerun) {
+        onlyonerun = false;
 
+        var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
+        board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+        board.material = new BABYLON.StandardMaterial("Board",scene);
+        board.position = new BABYLON.Vector3(0, 10, 5);
+        board.scaling.y = 0.4;
+
+        board.material.backFaceCulling = false;
+
+        board.material.diffuseTexture = new BABYLON.Texture("winner.jpg", scene);
+
+       // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
+      //  board.material.diffuseTexture = boardTexture;
+        //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
+        board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+        board.material.backFaceCulling = true;
+
+        camera.target = board;
+    }
+
+}
 
     var createTorch = function (name, x, y, z, scene, shadowGenerator, brickMaterial, woodMaterial, grassMaterial) {
         //createBrickBlock
