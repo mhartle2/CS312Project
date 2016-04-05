@@ -1149,26 +1149,29 @@ function endGame()
 function winner() {
     gameOver = true;
     youWin = true;
+    
     if (onlyonerun) {
         onlyonerun = false;
+        var wah = new BABYLON.Sound("winner", "guile-3.mid", scene, function () {
 
-        var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
-        board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
-        board.material = new BABYLON.StandardMaterial("Board",scene);
-        board.position = new BABYLON.Vector3(0, 10, 5);
-        board.scaling.y = 0.4;
+            var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
+            board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+            board.material = new BABYLON.StandardMaterial("Board",scene);
+            board.position = new BABYLON.Vector3(0, 10, 5);
+            board.scaling.y = 0.4;
 
-        board.material.backFaceCulling = false;
+            board.material.backFaceCulling = false;
 
-        board.material.diffuseTexture = new BABYLON.Texture("winner.jpg", scene);
+            board.material.diffuseTexture = new BABYLON.Texture("winner.jpg", scene);
 
-       // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
-      //  board.material.diffuseTexture = boardTexture;
-        //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
-        board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
-        board.material.backFaceCulling = true;
+           // var boardTexture = new BABYLON.DynamicTexture("Boardtexture", 128, scene, true);
+          //  board.material.diffuseTexture = boardTexture;
+            //board.material.specularColor = new BABYLON.Color3(0, 0, 0);
+            board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+            board.material.backFaceCulling = true;
 
-        camera.target = board;
+            camera.target = board;
+        });
     }
 
 }
