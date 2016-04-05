@@ -1152,7 +1152,9 @@ function winner() {
     
     if (onlyonerun) {
         onlyonerun = false;
-        var wah = new BABYLON.Sound("winner", "guile-3.mid", scene, function () {
+        var wah = new BABYLON.Sound("WahWahWah", "guile-3.mp3", scene, function () {
+            wah.play(2);
+
 
             var board = BABYLON.Mesh.CreatePlane("Board",10,scene);
             board.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
@@ -1170,7 +1172,12 @@ function winner() {
             board.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
             board.material.backFaceCulling = true;
 
+           // boardTexture.drawText("Game Over", null, 60, "bold 60px verdana", "white", "#000000", "opacity = 1");
+
+
             camera.target = board;
+
+
         });
     }
 
